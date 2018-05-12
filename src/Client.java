@@ -1,3 +1,7 @@
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
 import javax.swing.JFrame;
 
 
@@ -28,11 +32,40 @@ public class Client extends JFrame{
 		this.setSize(x,y);
 	}
 
+
+	public void connectServer(String ipAddress,int port) {
+		Socket socket=null;
+		try {
+			socket=new Socket(ipAddress,port);
+
+			//送信用object
+			//受信用object
+
+
+			socket.close();//これはいるのか？
+
+		}catch(UnknownHostException e) {
+			System.out.println("ホストのＩＰアドレスが判定できません: "+e);
+		}catch(IOException e) {
+			System.out.println("サーバー接続時にエラーが発生しました: "+e);
+		}
+	}
+
+	//データ送信用クラス
+
+	//データ受信用クラス
+
 	public static void main(String[] args) {
 		Client client=new Client();
 		client.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		client.setVisible(true);
 		client.setResizable(false);
+
+		String ipAddress=args[0];
+		int port=Integer.parseInt(args[1]);
+
+		client.connectServer(ipAddress,port);
+
 	}
 
 }
