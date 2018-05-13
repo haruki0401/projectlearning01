@@ -23,7 +23,7 @@ public class MainPanel extends JPanel{
 		client=cl;
 		this.setName(name);
 
-		mainScreen();
+		//mainScreen();
 	}
 
 	public void background() {//簡単のために背景表示のみメソッドを分割
@@ -193,6 +193,29 @@ public class MainPanel extends JPanel{
 		add(login2,0);
 		add(backToMain,0);
 
+	}
+
+	public void errorOutput() {
+		JLabel msg1=new JLabel("サーバ接続時にエラーが発生しました。");
+		JLabel msg2=new JLabel("ゲームクライアントを終了してください。");
+
+
+		background();
+
+		msg1.setHorizontalAlignment(JLabel.CENTER);
+		msg1.setBounds(500,200,500,50);
+		msg1.setFont(new Font("MS Gothic",Font.PLAIN,25));
+		msg1.setForeground(Color.RED);
+
+		msg2.setHorizontalAlignment(JLabel.CENTER);
+		msg2.setBounds(500,300,500,50);
+		msg2.setFont(new Font("MS Gothic",Font.PLAIN,25));
+		msg2.setForeground(Color.RED);
+
+		add(msg1,0);
+		add(msg2,0);
+
+		repaint();
 	}
 
 }

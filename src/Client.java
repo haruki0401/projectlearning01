@@ -38,6 +38,8 @@ public class Client extends JFrame{
 		try {
 			socket=new Socket(ipAddress,port);
 
+			mainPanel.mainScreen();
+
 			//送信用object
 			//受信用object
 
@@ -46,8 +48,10 @@ public class Client extends JFrame{
 
 		}catch(UnknownHostException e) {
 			System.out.println("ホストのＩＰアドレスが判定できません: "+e);
+			mainPanel.errorOutput();//アプリケーション画面にも表示(アプリケーションメッセージでは２つのエラーを区別しない。)
 		}catch(IOException e) {
 			System.out.println("サーバー接続時にエラーが発生しました: "+e);
+			mainPanel.errorOutput();
 		}
 	}
 
