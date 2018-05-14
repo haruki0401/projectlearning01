@@ -47,7 +47,7 @@ public class Client extends JFrame{
 			mainPanel.mainScreen();
 
 			//送信用object
-			oos=new ObjectOutputStream(socket.getOutputStream());
+			//oos=new ObjectOutputStream(socket.getOutputStream());
 			//受信用object
 			receive=new Receiver();
 
