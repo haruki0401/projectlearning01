@@ -16,6 +16,8 @@ import javax.swing.JTextField;
 public class MainPanel extends JPanel{
 
 	Client client;
+	Client.Message msg;
+
 
 	Font f=new Font("Arial",Font.PLAIN,50);
 
@@ -85,6 +87,7 @@ public class MainPanel extends JPanel{
 		add(login,0);
 		add(title,0);
 
+		repaint();
 	}
 
 	public void loginScreen(){//ログイン画面に遷移
@@ -164,6 +167,16 @@ public class MainPanel extends JPanel{
 					//test
 					System.out.println(input_id);
 					System.out.println(input_pass);
+
+
+					msg=client.new Message(input_id,0);
+					/*client.sendMsg(msg);
+					msg=client.new Message(input_pass,1);
+					client.sendMsg(msg);*/
+
+					client.sendMessage(msg);
+					//client.sendMsg(input_id);
+
 
 					//サーバに接続するメソッドに（clientクラスに戻したほうがいいかも）　確認中などのメッセージ表示させたい
 					remove(login2);
