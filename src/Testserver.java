@@ -7,7 +7,6 @@ import java.net.Socket;
 
 class Testserver {
 	PrintWriter out;
-	Message msg;
 
 	public void accept(String ip) {
 		try {
@@ -29,10 +28,9 @@ class Testserver {
                     /*OutputStream os = s.getOutputStream();
                     DataOutputStream dos = new DataOutputStream(os);
                     dos.writeInt(random.nextInt());*/
-        			msg=new Message("aiueo",0);
-        			out.println(msg);//送信データをバッファに書き出す
+        			out.println("aiueo");//送信データをバッファに書き出す
         			out.flush();//送信データを送る
-        			System.out.println("サーバにメッセージ " + msg.getMsg() + " を送信しました");
+        			System.out.println("サーバにメッセージ " +"aiueo"+ " を送信しました");
                     // ソケットをクローズ
                     s.close();
             }
@@ -43,23 +41,6 @@ class Testserver {
     }
 	}
 
-	class Message{//送信データのオブジェクト
-		String msg;//送信データ内容
-		int type;//送信データ種類
-
-		Message(String msg,int type){
-			this.msg=msg;
-			this.type=type;
-		}
-
-		public String getMsg() {
-			return this.msg;
-		}
-
-		public int getType() {
-			return this.type;
-		}
-	}
 
 
 	public static void main(String[] args) {

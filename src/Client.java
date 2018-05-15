@@ -1,4 +1,6 @@
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -22,7 +24,7 @@ public class Client extends JFrame{
 	private static int receiveHandler=0;//1:データ受信要求中
 
 	private PrintWriter out;
-
+	private Receiver receiver;
 
 	//panel作成
 	public String[] PanelNames= {"main","Othello"};
@@ -49,8 +51,8 @@ public class Client extends JFrame{
 			out = new PrintWriter(socket.getOutputStream(), true); //データ送信用オブジェクトの用意
 
 			//受信用object
-			//receive=new Receiver(socket);
-
+			receiver=new Receiver(socket);
+			receiver.start();
 			//socket.close();//これはいるのか？]
 
 
@@ -80,10 +82,14 @@ public class Client extends JFrame{
 	}
 
 	//データ受信用クラス
-	/*class Receiver extends Thread{
+	class Receiver extends Thread{
+		private InputStreamReader sisr;
+		private BufferedReader br;
+
 		Receiver(Socket socket){
 			try {
-				ois=new ObjectInputStream(socket.getInputStream());
+				sisr=new InputStreamReader(socket.getInputStream());
+				br=new BufferedReader(sisr);
 			}catch(IOException e) {
 				e.printStackTrace();
 			}
@@ -92,22 +98,20 @@ public class Client extends JFrame{
 		public void run() {
 			try {
 				while(true) {
-					Message readMsg=(Message)(ois.readObject());
-					if(readMsg!=null) {
-						receiveMsg(readMsg);
+					String inputLine=br.readLine();
+					if(inputLine!=null) {
+						receiveMsg(inputLine);
 					}
 				}
 			}catch(IOException e) {
 				e.printStackTrace();
-			}catch(ClassNotFoundException e) {
-				e.printStackTrace();
 			}
 		}
-	}*/
+	}
 
-	/*public void receiveMsg(Message msg) {
+	public void receiveMsg(String msg) {
 		System.out.println("サーバからメッセージ " + msg + " を受信しました"); //テスト用標準出力
-	}*/
+	}
 
 
 	public static void main(String[] args) {
