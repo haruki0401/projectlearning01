@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -20,9 +19,9 @@ public class Client extends JFrame{
 	public static final int x=1500;
 	public static final int y=1000;
 
-	ObjectOutputStream oos;
-	Receiver receive;
-	private PrintWriter out;//データ送信用オブジェクト
+	private static int receiveHandler=0;//1:データ受信要求中
+
+	private PrintWriter out;
 
 
 	//panel作成
@@ -47,15 +46,15 @@ public class Client extends JFrame{
 			mainPanel.mainScreen();
 
 			//送信用object
-			//oos=new ObjectOutputStream(socket.getOutputStream());
+			out = new PrintWriter(socket.getOutputStream(), true); //データ送信用オブジェクトの用意
+
 			//受信用object
-			receive=new Receiver();
+			//receive=new Receiver(socket);
 
 			//socket.close();//これはいるのか？]
 
 
 
-			out = new PrintWriter(socket.getOutputStream(), true); //データ送信用オブジェクトの用意
 
 
 		}catch(UnknownHostException e) {
@@ -68,46 +67,47 @@ public class Client extends JFrame{
 		}
 	}
 
-	public void sendMessage(Message msg){	// サーバに操作情報を送信
+	//データ送信用メソッド
+
+	public void sendMessage(String msg){	// サーバに操作情報を送信
 		out.println(msg);//送信データをバッファに書き出す
 		out.flush();//送信データを送る
-		System.out.println("サーバにメッセージ " + msg.getMsg() + " を送信しました"); //テスト標準出力
+		System.out.println("サーバにメッセージ " + msg+ " を送信しました"); //テスト標準出力
 	}
 
-	//データ送信用メソッド
-	/*public void sendMsg(String msg) {//サーバに操作情報を送信
-		try {
-			oos.writeObject(msg);
-			oos.flush();
-			System.out.println("サーバにメッセージ " + msg + " を送信しました"); //テスト標準出力
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.out.println("!");//test
-		}
-	}*/
-
-	class Message{//送信データのオブジェクト
-		String msg;//送信データ内容
-		int type;//送信データ種類
-
-		Message(String msg,int type){
-			this.msg=msg;
-			this.type=type;
-		}
-
-		public String getMsg() {
-			return this.msg;
-		}
-
-		public int getType() {
-			return this.type;
-		}
+	public void receiveHandler(int i){//receiveHandler:データ受信をクライアントが欲している状態であるかどうかを判断する変数
+		receiveHandler=i;
 	}
 
 	//データ受信用クラス
-	class Receiver{
+	/*class Receiver extends Thread{
+		Receiver(Socket socket){
+			try {
+				ois=new ObjectInputStream(socket.getInputStream());
+			}catch(IOException e) {
+				e.printStackTrace();
+			}
+		}
 
-	}
+		public void run() {
+			try {
+				while(true) {
+					Message readMsg=(Message)(ois.readObject());
+					if(readMsg!=null) {
+						receiveMsg(readMsg);
+					}
+				}
+			}catch(IOException e) {
+				e.printStackTrace();
+			}catch(ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+	}*/
+
+	/*public void receiveMsg(Message msg) {
+		System.out.println("サーバからメッセージ " + msg + " を受信しました"); //テスト用標準出力
+	}*/
 
 
 	public static void main(String[] args) {

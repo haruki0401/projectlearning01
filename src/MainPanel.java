@@ -16,8 +16,6 @@ import javax.swing.JTextField;
 public class MainPanel extends JPanel{
 
 	Client client;
-	Client.Message msg;
-
 
 	Font f=new Font("Arial",Font.PLAIN,50);
 
@@ -57,8 +55,10 @@ public class MainPanel extends JPanel{
 		createID.setBounds(550,400,400,100);
 		createID.setFont(new Font("MS Gothic",Font.PLAIN,50));
 		createID.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {//login_button_click_event
-				//アカウント新規作成画面
+			public void actionPerformed(ActionEvent e) {//createID_button_click_event
+				removeAll();
+				loginScreen(0);
+				repaint();
 			}
 		});
 
@@ -67,7 +67,7 @@ public class MainPanel extends JPanel{
 		login.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {//login_button_click_event
 				removeAll();
-				loginScreen();
+				loginScreen(1);
 				repaint();
 			}
 		});
@@ -90,7 +90,7 @@ public class MainPanel extends JPanel{
 		repaint();
 	}
 
-	public void loginScreen(){//ログイン画面に遷移
+	public void loginScreen(int i){//ログイン画面に遷移,引数0:新規作成,1:ログイン
 
 		background();
 
@@ -109,7 +109,7 @@ public class MainPanel extends JPanel{
 		JLabel passMsg=new JLabel("pass");
 		JTextField id=new JTextField(16);
 		JPasswordField pass=new JPasswordField(16);
-		JButton login2=new JButton("LOGIN");
+		JButton login2=new JButton();//このボタンだけ、ログインのときと新規作成のときで分岐
 		JLabel errorMsg=new JLabel("");//入力エラー時のメッセージ
 		JButton backToMain=new JButton("Back to Main");
 
@@ -143,8 +143,14 @@ public class MainPanel extends JPanel{
 		errorMsg.setFont(new Font("MS Gothic",Font.PLAIN,25));
 		errorMsg.setForeground(Color.RED);
 
+		if(i==0) {
+			login2.setText("新規作成");
+			login2.setFont(new Font("MS Gothic",Font.PLAIN,25));
+		}else {
+			login2.setText("LOGIN");
+			login2.setFont(f);
+		}
 		login2.setBounds(550,750,400,50);
-		login2.setFont(f);
 		login2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {//login2_button_click_event
 				String input_id;
@@ -168,15 +174,15 @@ public class MainPanel extends JPanel{
 					System.out.println(input_id);
 					System.out.println(input_pass);
 
-
-					msg=client.new Message(input_id,0);
-					/*client.sendMsg(msg);
-					msg=client.new Message(input_pass,1);
-					client.sendMsg(msg);*/
-
-					client.sendMessage(msg);
+					if(i==0) {
+						client.sendMessage("0"+input_id+"\n"+input_pass);
+					}else {
+						client.sendMessage("1"+input_id+"\n"+input_pass);
+					}
 					//client.sendMsg(input_id);
+					errorMsg.setText("サーバと通信中・・・");
 
+					client.receiveHandler(1);//データ要求
 
 					//サーバに接続するメソッドに（clientクラスに戻したほうがいいかも）　確認中などのメッセージ表示させたい
 					remove(login2);
@@ -193,6 +199,9 @@ public class MainPanel extends JPanel{
 				removeAll();
 				mainScreen();
 				repaint();
+
+				client.receiveHandler(0);//データ要求キャンセル
+
 			}
 		});
 
