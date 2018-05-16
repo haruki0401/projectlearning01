@@ -9,13 +9,6 @@ import javax.swing.JFrame;
 
 
 
-
-/*class NewCanvas extends Canvas{
-	public void paint(Graphics g) {
-
-	}
-}*/
-
 public class Client extends JFrame{
 
 	public static final int x=1500;
@@ -25,6 +18,8 @@ public class Client extends JFrame{
 
 	private PrintWriter out;
 	private Receiver receiver;
+
+	private Player my;
 
 	//panel作成
 	public String[] PanelNames= {"main","Othello"};
@@ -61,10 +56,10 @@ public class Client extends JFrame{
 
 		}catch(UnknownHostException e) {
 			System.out.println("ホストのＩＰアドレスが判定できません: "+e);
-			mainPanel.errorOutput();//アプリケーション画面にも表示(アプリケーションメッセージでは２つのエラーを区別しない。)
+			mainPanel.connectError();//アプリケーション画面にも表示(アプリケーションメッセージでは２つのエラーを区別しない。)
 		}catch(IOException e) {
 			System.out.println("サーバー接続時にエラーが発生しました: "+e);
-			mainPanel.errorOutput();
+			mainPanel.connectError();
 			//mainPanel.mainScreen();//とりあえず今はサーバに接続できないのでエラーで表示するように（）
 		}
 	}
@@ -99,8 +94,9 @@ public class Client extends JFrame{
 			try {
 				while(true) {
 					String inputLine=br.readLine();
-					if(inputLine!=null) {
-						receiveMsg(inputLine);
+					//if(inputLine!=null) {//試験用
+					if(inputLine!=null&&receiveHandler==1) {
+						classifyMsg(inputLine);
 					}
 				}
 			}catch(IOException e) {
@@ -109,8 +105,38 @@ public class Client extends JFrame{
 		}
 	}
 
-	public void receiveMsg(String msg) {
+	public void classifyMsg(String msg) {//ここで受信データの種類判別
 		System.out.println("サーバからメッセージ " + msg + " を受信しました"); //テスト用標準出力
+
+		int type;
+
+		type = Integer.parseInt("" +msg.charAt(0));
+
+		switch(type){
+
+		case 0:{
+			if(msg.equals("00")) {//新規作成失敗
+				mainPanel.authenticationMsg(0);
+			}else if(msg.equals("01")) {//成功
+				mainPanel.authenticationMsg(1);
+			}
+
+			break;
+		}
+
+		case 1:{
+			if(msg.equals("10")) {//login失敗
+				mainPanel.authenticationMsg(2);
+			}else if((msg.substring(0,2)).equals("11")) {//成功
+				my=new Player(msg.substring(2));
+
+				mainPanel.menu(my);
+			}
+
+			break;
+		}
+
+		}
 	}
 
 

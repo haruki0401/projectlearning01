@@ -19,6 +19,9 @@ public class MainPanel extends JPanel{
 
 	Font f=new Font("Arial",Font.PLAIN,50);
 
+	//JLabel errorMsg=new JLabel("");//入力エラー時のメッセージ
+
+
 	MainPanel(Client cl,String name){
 		client=cl;
 		this.setName(name);
@@ -44,11 +47,31 @@ public class MainPanel extends JPanel{
 
 	}
 
+	public void backToMain() {
+		JButton backToMain=new JButton("Back to Main");
+
+		backToMain.setBounds(50,900,400,50);
+		backToMain.setFont(f);
+		backToMain.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {//login2_button_click_event
+				mainScreen();
+				repaint();
+
+				client.receiveHandler(0);//データ要求キャンセル
+
+			}
+		});
+
+		add(backToMain,0);
+	}
+
 	public void mainScreen() {//起動時画面
 
 		JButton createID=new JButton("新規作成");
 		JButton login=new JButton("LOGIN");
 		JLabel title=new JLabel("OTHELLO GAME");
+
+		removeAll();
 
 		background();
 
@@ -56,7 +79,6 @@ public class MainPanel extends JPanel{
 		createID.setFont(new Font("MS Gothic",Font.PLAIN,50));
 		createID.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {//createID_button_click_event
-				removeAll();
 				loginScreen(0);
 				repaint();
 			}
@@ -66,7 +88,6 @@ public class MainPanel extends JPanel{
 		login.setFont(f);
 		login.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {//login_button_click_event
-				removeAll();
 				loginScreen(1);
 				repaint();
 			}
@@ -92,7 +113,10 @@ public class MainPanel extends JPanel{
 
 	public void loginScreen(int i){//ログイン画面に遷移,引数0:新規作成,1:ログイン
 
+		removeAll();
+
 		background();
+		backToMain();
 
 		BufferedImage loginBgImage=null;
 
@@ -111,7 +135,6 @@ public class MainPanel extends JPanel{
 		JPasswordField pass=new JPasswordField(16);
 		JButton login2=new JButton();//このボタンだけ、ログインのときと新規作成のときで分岐
 		JLabel errorMsg=new JLabel("");//入力エラー時のメッセージ
-		JButton backToMain=new JButton("Back to Main");
 
 
 		loginBg.setBounds(375,125,750,750);
@@ -175,9 +198,9 @@ public class MainPanel extends JPanel{
 					System.out.println(input_pass);
 
 					if(i==0) {
-						client.sendMessage("0"+input_id+"\n"+input_pass);
-					}else {
-						client.sendMessage("1"+input_id+"\n"+input_pass);
+						client.sendMessage("0"+input_id+"_"+input_pass);
+					}else if(i==1) {
+						client.sendMessage("1"+input_id+"_"+input_pass);
 					}
 					//client.sendMsg(input_id);
 					errorMsg.setText("サーバと通信中・・・");
@@ -192,18 +215,8 @@ public class MainPanel extends JPanel{
 			}
 		});
 
-		backToMain.setBounds(50,900,400,50);
-		backToMain.setFont(f);
-		backToMain.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {//login2_button_click_event
-				removeAll();
-				mainScreen();
-				repaint();
 
-				client.receiveHandler(0);//データ要求キャンセル
 
-			}
-		});
 
 		add(loginBg,0);
 		add(loginMsg,0);
@@ -213,14 +226,18 @@ public class MainPanel extends JPanel{
 		add(pass,0);
 		add(errorMsg,0);
 		add(login2,0);
-		add(backToMain,0);
 
 	}
 
-	public void errorOutput() {
+	public void menu(Player my) {//メニュ－画面
+
+	}
+
+	public void connectError() {
 		JLabel msg1=new JLabel("サーバ接続時にエラーが発生しました。");
 		JLabel msg2=new JLabel("ゲームクライアントを終了してください。");
 
+		removeAll();
 
 		background();
 
@@ -238,6 +255,42 @@ public class MainPanel extends JPanel{
 		add(msg2,0);
 
 		repaint();
+	}
+
+	public void authenticationMsg(int i){//0:登録失敗1:登録成功2:login失敗
+		JLabel msg1=new JLabel("");
+		JLabel msg2=new JLabel("");
+
+		removeAll();
+		background();
+		backToMain();
+
+
+		if(i==0) {
+			msg1.setText("入力されたIDはすでに存在します。");
+		}else if(i==1){
+			msg1.setText("アカウントの新規作成に成功しました。");
+			msg2.setText("メイン画面に戻ってログインしてください。");
+		}else if(i==2){
+			msg1.setText("ログインできませんでした");
+		}
+
+		msg1.setHorizontalAlignment(JLabel.CENTER);
+		msg1.setBounds(500,500,500,50);
+		msg1.setFont(new Font("MS Gothic",Font.PLAIN,25));
+		msg1.setForeground(Color.RED);
+
+		msg2.setHorizontalAlignment(JLabel.CENTER);
+		msg2.setBounds(500,600,500,50);
+		msg2.setFont(new Font("MS Gothic",Font.PLAIN,25));
+		msg2.setForeground(Color.RED);
+
+		add(msg1,0);
+		add(msg2,0);
+
+
+		repaint();
+
 	}
 
 }
