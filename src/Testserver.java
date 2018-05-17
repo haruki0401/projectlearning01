@@ -84,7 +84,7 @@ class Testserver {
 
 
 	public static void main(String[] args) {
-		Testserver server = new Testserver();//待ち受けポート10000番でサーバオブジェクトを準備
+		Testserver server = new Testserver();
 		String ipAddress=args[0];
 		server.accept(ipAddress);
     }

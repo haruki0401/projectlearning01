@@ -19,7 +19,7 @@ public class Client extends JFrame{
 	private PrintWriter out;
 	private Receiver receiver;
 
-	private String tempPlayerID;//一時的なIDの保存
+	//private String tempPlayerID;//一時的なIDの保存
 
 	private Player my;
 
@@ -30,7 +30,7 @@ public class Client extends JFrame{
 	MenuPanel menuPanel;
 
 
-	public Client() {
+	public Client() {//コンストラクタ
 		this.add(mainPanel);
 		mainPanel.setLayout(null);
 		mainPanel.setVisible(true);
@@ -113,9 +113,9 @@ public class Client extends JFrame{
 		}
 	}
 
-	public void getTempPlayerID(String p) {
+	/*public void getTempPlayerID(String p) {
 		tempPlayerID=p;
-	}
+	}*/
 
 	public void classifyMsg(String msg) {//ここで受信データの種類判別
 		System.out.println("サーバからメッセージ " + msg + " を受信しました"); //テスト用標準出力
@@ -142,15 +142,21 @@ public class Client extends JFrame{
 			}else if((msg.substring(0,2)).equals("11")) {//成功
 				my=new Player(msg.substring(2));
 
-				this.remove(mainPanel);
+				//this.remove(mainPanel);
 
-				menuPanel=new MenuPanel(this,PanelNames[1]);
+				//repaint();
 
-				this.add(menuPanel);
-				mainPanel.setLayout(null);
-				mainPanel.setVisible(true);
+				menuPanel=new MenuPanel(this,my,PanelNames[1]);
 
-				menuPanel.menu(my);
+				/*this.add(menuPanel);
+				menuPanel.setLayout(null);
+				menuPanel.setVisible(true);*/
+
+				changePanel(0,1);
+
+				menuPanel.menuScreen();
+
+
 
 
 			}
@@ -163,6 +169,27 @@ public class Client extends JFrame{
 
 		}
 
+		}
+	}
+
+	public void changePanel(int i,int j) {//引数: from,to
+		if(i==0) {
+			this.remove(mainPanel);
+		}else if(i==1) {
+			this.remove(menuPanel);
+		}
+
+		if(j==0) {
+			this.add(mainPanel,0);
+			mainPanel.setLayout(null);
+			mainPanel.setVisible(true);
+			mainPanel.mainScreen();
+			this.revalidate();
+		}else if(j==1) {
+			this.add(menuPanel,0);
+			menuPanel.setLayout(null);
+			menuPanel.setVisible(true);
+			this.revalidate();
 		}
 	}
 
