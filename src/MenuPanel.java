@@ -151,9 +151,12 @@ public class MenuPanel extends JPanel{
 
 
 					//debug用
-					Player[] p=new Player[2];
-					p[0]=my;
-					p[1]=my;
+					Player[] p=new Player[10];
+
+					for(int i=0;i<10;i++) {
+						p[i]=my;
+
+					}
 
 					results(p);
 
@@ -203,10 +206,13 @@ public class MenuPanel extends JPanel{
 
 		JPanel resultArea=new JPanel();
 		//SpringLayout layout1 = new SpringLayout();
-	    resultArea.setLayout(null);
+	    //resultArea.setLayout(null);
 
 		JLabel[] result=new JLabel[players.length];
 		JScrollPane scrollpane = new JScrollPane(resultArea);
+		resultArea.setPreferredSize(new Dimension(100, 100));
+
+
 
 
 		removeAll();
@@ -216,15 +222,15 @@ public class MenuPanel extends JPanel{
 
 		menuBg.setBounds(0,125,1500,750);
 
-		resultArea.setBounds(375,125,750,750);
-		resultArea.setBackground(Color.BLUE);
+		/*resultArea.setBounds(375,125,750,750);
+		resultArea.setBackground(Color.BLUE);*/
 
 
 
-		result[0]=new JLabel("対戦相手: "+"aiueo"+" | "+"WIN");
-		result[1]=new JLabel("対戦相手: "+"aiueo"+" | "+"LOSE");
+		/*result[0]=new JLabel("対戦相手: "+"aiueo"+" | "+"WIN");
+		result[1]=new JLabel("対戦相手: "+"aiueo"+" | "+"LOSE");*/
 
-		result[0].setHorizontalAlignment(JLabel.CENTER);
+		/*result[0].setHorizontalAlignment(JLabel.CENTER);
 		result[0].setPreferredSize(new Dimension(500,30));
 		//result[0].setBounds(0,200,500,50);
 		result[0].setFont(new Font("MS Gothic",Font.PLAIN,25));
@@ -234,12 +240,18 @@ public class MenuPanel extends JPanel{
 		result[1].setPreferredSize(new Dimension(500,30));
 		//result[1].setBounds(0,300,500,50);
 		result[1].setFont(new Font("MS Gothic",Font.PLAIN,25));
-		result[1].setForeground(Color.WHITE);
+		result[1].setForeground(Color.WHITE);*/
 
 
-		for(int i=0;i<2;i++){
+		for(int i=0;i<10;i++){
 			//if(i>0) {
 	        System.out.println(i);
+	        result[i]=new JLabel("対戦相手: "+"aiueo"+" | "+"WIN");
+	        result[i].setHorizontalAlignment(JLabel.CENTER);
+			//result[0].setPreferredSize(new Dimension(500,30));
+			//result[0].setBounds(0,200,500,50);
+			result[i].setFont(new Font("MS Gothic",Font.PLAIN,25));
+			result[i].setForeground(Color.WHITE);
 	        result[i].setBounds(50,300+(100*i),500,50);
 			//}
 
@@ -247,13 +259,13 @@ public class MenuPanel extends JPanel{
 			resultArea.add(result[i]);
 		}
 
+		resultArea.add(scrollpane);
 
 		/*resultArea.add(result[0]);
 		resultArea.add(result[1]);*/
 
-		add(scrollpane);
+		//add(menuBg,0);
 
-		add(menuBg,0);
 		add(resultArea,0);
 
 		repaint();
