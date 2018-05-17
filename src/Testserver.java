@@ -70,7 +70,7 @@ class Testserver {
 						System.out.println(inputLine);
 					}
 					if(inputLine.equals("11_2")) {
-						out.println("10");
+						out.println("11sharukis10s20s30");
 						out.flush();
 	        			System.out.println("サーバにメッセージを送信しました");
 					}

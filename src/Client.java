@@ -19,17 +19,25 @@ public class Client extends JFrame{
 	private PrintWriter out;
 	private Receiver receiver;
 
+	private String tempPlayerID;//一時的なIDの保存
+
 	private Player my;
 
 	//panel作成
-	public String[] PanelNames= {"main","Othello"};
+	public String[] PanelNames= {"main","menu","Othello"};
 
 	MainPanel mainPanel=new MainPanel(this,PanelNames[0]);
+	MenuPanel menuPanel;
+
 
 	public Client() {
 		this.add(mainPanel);
 		mainPanel.setLayout(null);
 		mainPanel.setVisible(true);
+
+		/*this.add(menuPanel);
+		menuPanel.setLayout(null);
+		menuPanel.setVisible(false);*/
 
 		this.setSize(x,y);
 	}
@@ -48,7 +56,7 @@ public class Client extends JFrame{
 			//受信用object
 			receiver=new Receiver(socket);
 			receiver.start();
-			//socket.close();//これはいるのか？]
+			//socket.close();//これはいるのか？
 
 
 
@@ -105,6 +113,10 @@ public class Client extends JFrame{
 		}
 	}
 
+	public void getTempPlayerID(String p) {
+		tempPlayerID=p;
+	}
+
 	public void classifyMsg(String msg) {//ここで受信データの種類判別
 		System.out.println("サーバからメッセージ " + msg + " を受信しました"); //テスト用標準出力
 
@@ -130,10 +142,25 @@ public class Client extends JFrame{
 			}else if((msg.substring(0,2)).equals("11")) {//成功
 				my=new Player(msg.substring(2));
 
-				mainPanel.menu(my);
+				this.remove(mainPanel);
+
+				menuPanel=new MenuPanel(this,PanelNames[1]);
+
+				this.add(menuPanel);
+				mainPanel.setLayout(null);
+				mainPanel.setVisible(true);
+
+				menuPanel.menu(my);
+
+
 			}
 
 			break;
+		}
+
+		case 2:{
+
+
 		}
 
 		}

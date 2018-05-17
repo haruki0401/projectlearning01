@@ -9,11 +9,16 @@ public class Player {
 	String order; //先攻後攻情報(ここで使うかわからないのでとりあえず保留)
 
 	Player(String str){
-		String[] playerData=str.split("_");
-		playerID=playerData[0];
-		win=playerData[1];
-		draw=playerData[2];
-		lose=playerData[3];
+		String[] playerData=str.split(str.substring(0,1));
+		playerID=playerData[1];
+		win=playerData[2];
+		draw=playerData[3];
+		lose=playerData[4];
+
+		System.out.println("player 情報を取得しました。");
+		System.out.println(playerID+win+draw+lose);
+
+
 	}
 
 	String getID(){ //プレイヤIDの取得

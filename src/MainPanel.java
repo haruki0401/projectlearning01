@@ -198,9 +198,13 @@ public class MainPanel extends JPanel{
 					System.out.println(input_pass);
 
 					if(i==0) {
-						client.sendMessage("0"+input_id+"_"+input_pass);
+						client.getTempPlayerID(input_id);
+						client.sendMessage("0"+input_id+"\n"+input_pass);
 					}else if(i==1) {
-						client.sendMessage("1"+input_id+"_"+input_pass);
+						client.getTempPlayerID(input_id);
+						//client.sendMessage("1"+input_id+"\n"+input_pass);
+						client.sendMessage("1"+input_id+"_"+input_pass);//test用
+
 					}
 					//client.sendMsg(input_id);
 					errorMsg.setText("サーバと通信中・・・");
@@ -229,9 +233,6 @@ public class MainPanel extends JPanel{
 
 	}
 
-	public void menu(Player my) {//メニュ－画面
-
-	}
 
 	public void connectError() {
 		JLabel msg1=new JLabel("サーバ接続時にエラーが発生しました。");
