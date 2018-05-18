@@ -4,6 +4,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
@@ -104,7 +105,7 @@ public class Client extends JFrame{
 					String inputLine=br.readLine();
 					//if(inputLine!=null) {//試験用
 					if(inputLine!=null&&receiveHandler==1) {
-						classifyMsg(inputLine);
+						classifyMsg(inputLine,br);
 					}
 				}
 			}catch(IOException e) {
@@ -117,7 +118,7 @@ public class Client extends JFrame{
 		tempPlayerID=p;
 	}*/
 
-	public void classifyMsg(String msg) {//ここで受信データの種類判別
+	public void classifyMsg(String msg,BufferedReader br) {//ここで受信データの種類判別
 		System.out.println("サーバからメッセージ " + msg + " を受信しました"); //テスト用標準出力
 
 		int type;
@@ -127,16 +128,25 @@ public class Client extends JFrame{
 		switch(type){
 
 		case 0:{
+
+			receiveHandler=0;
+
 			if(msg.equals("00")) {//新規作成失敗
 				mainPanel.authenticationMsg(0);
 			}else if(msg.equals("01")) {//成功
 				mainPanel.authenticationMsg(1);
 			}
 
+			receiveHandler=0;
+
+
 			break;
 		}
 
 		case 1:{
+			receiveHandler=0;
+
+
 			if(msg.equals("10")) {//login失敗
 				mainPanel.authenticationMsg(2);
 			}else if((msg.substring(0,2)).equals("11")) {//成功
@@ -158,15 +168,44 @@ public class Client extends JFrame{
 
 
 
-
 			}
+
 
 			break;
 		}
 
 		case 2:{
+			receiveHandler=0;
+
+			String str=msg.substring(1);
+
+			//Player[] players;
+			ArrayList<String> results = new ArrayList<String>();
+			Player player=null;
+
+			if(!(str.equals(""))) {
+				player=new Player(str);
+				System.out.println("!");
+			}
+
+			try {
+				while(br.ready()) {
+					str=br.readLine();
+					results.add(str);
+					System.out.println("!");
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			String[]  s= results.toArray(new String[results.size()]);
+
+			//System.out.println(p.length);
+
+			menuPanel.results(player,s);
 
 
+			break;
 		}
 
 		}

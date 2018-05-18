@@ -42,7 +42,7 @@ public class MenuPanel extends JPanel{
 		JButton search=new JButton("player検索");
 		JButton signout=new JButton("Sign Out");
 		JLabel playerID=new JLabel("ID: "+my.getID()+" さん");
-		JLabel playerResult=new JLabel("勝: "+my.getWin()+" 負: "+my.getLose()+" 分: "+my.getDraw());
+		JLabel playerResult=new JLabel("勝: "+my.getWin()+" 負: "+my.getLose()+" 分: "+my.getDraw()+" 投了: "+my.getGiveUp());
 
 
 		removeAll();
@@ -137,18 +137,18 @@ public class MenuPanel extends JPanel{
 
 
 					//debug用
-					Player[] p=new Player[50];
+					/*Player[] p=new Player[50];
 
 					for(int i=0;i<50;i++) {
 						p[i]=my;
 
 					}
 
-					results(p);
+					results(p);*/
 
 					//終わり
 
-					client.sendMessage("3"+input_id);
+					client.sendMessage("2"+input_id);//サーバにメッセージ送信
 
 					//client.sendMsg(input_id);
 					errorMsg.setText("サーバと通信中・・・");
@@ -177,7 +177,7 @@ public class MenuPanel extends JPanel{
 		repaint();
 	}
 
-	public void results(Player[] players) {//戦績表示　引数にplayer型の配列
+	public void results(Player player,String[] s) {//戦績表示　引数にplayer型の配列
 		//スクロールバー(表示する条件も分岐できれば尚良し)の追加が必要
 
 		JLabel menuBg = new JLabel("aiueo");
@@ -186,10 +186,21 @@ public class MenuPanel extends JPanel{
 		menuBg.setBounds(0,125,1500,750);
 		menuBg.setBackground(Color.BLACK);
 
+		JLabel playerResult=new JLabel("勝: "+player.getWin()
+			+" 負: "+player.getLose()+" 分: "+player.getDraw()
+			+" 投了: "+player.getGiveUp());
+
+		playerResult.setHorizontalAlignment(JLabel.CENTER);
+		playerResult.setBounds(500,100,500,50);
+		playerResult.setFont(new Font("MS Gothic",Font.PLAIN,50));
+		playerResult.setForeground(Color.YELLOW);
+
 		JPanel resultArea=new JPanel();
 	    resultArea.setLayout(null);
 
-		JLabel[] result=new JLabel[players.length];
+	    JLabel errorMsg=new JLabel();
+
+		JLabel[] result=new JLabel[s.length];
 		JScrollPane scrollpane = new JScrollPane(resultArea);
 		scrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -203,10 +214,6 @@ public class MenuPanel extends JPanel{
 		backToMenu();
 
 
-		menuBg.setHorizontalAlignment(JLabel.CENTER);
-
-		menuBg.setBounds(0,125,1500,750);
-		menuBg.setBackground(Color.BLUE);
 
 		resultArea.setBackground(Color.GRAY);
 
@@ -214,21 +221,24 @@ public class MenuPanel extends JPanel{
 		resultArea.setPreferredSize(new  Dimension(750,25));//Task数に合わせてmainPanelのサイズを変更する
 
 
-		for(int i=0;i<50;i++){
-			//if(i>0) {
+		/*if(players.length==0) {
+			//errorMsg
+		}*/
+
+		for(int i=0;i<s.length;i++){
 	        System.out.println(i);
 	        result[i]=new JLabel("対戦相手: "+"aiueo"+" | "+"WIN"+i);
 	        result[i].setHorizontalAlignment(JLabel.CENTER);
 			result[i].setFont(new Font("MS Gothic",Font.PLAIN,25));
 			result[i].setForeground(Color.WHITE);
 	        result[i].setBounds(50,0+(25*i),500,50);
-			//}
 
 			resultArea.setPreferredSize(new  Dimension(750,25*(i+2)));//Task数に合わせてmainPanelのサイズを変更する
 			resultArea.add(result[i]);
 		}
 
 
+		add(playerResult,0);
 		add(scrollpane,0);
 
 		revalidate();

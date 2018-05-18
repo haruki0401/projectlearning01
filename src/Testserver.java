@@ -70,7 +70,13 @@ class Testserver {
 						System.out.println(inputLine);
 					}
 					if(inputLine.equals("11_2")) {
-						out.println("11sharukis10s20s30");
+						out.println("11haruki/10/20/30/40");
+						out.flush();
+	        			System.out.println("サーバにメッセージを送信しました");
+					}
+					if(inputLine.equals("212")) {
+						//out.println("2");
+						out.println("2/yamada/10/20/30/40\nharuki/000\numemoto/001");//win=000,lose=001,draw=010,give up(相手が)=011,(自分が)=100
 						out.flush();
 	        			System.out.println("サーバにメッセージを送信しました");
 					}

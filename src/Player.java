@@ -4,19 +4,21 @@ public class Player {
 	String win;
 	String lose;
 	String draw;
+	String giveUp;
 
 
 	String order; //先攻後攻情報(ここで使うかわからないのでとりあえず保留)
 
 	Player(String str){
-		String[] playerData=str.split(str.substring(0,1));
-		playerID=playerData[1];
-		win=playerData[2];
-		draw=playerData[3];
-		lose=playerData[4];
+		String[] playerData=str.split("/");
+		playerID=playerData[0];
+		win=playerData[1];
+		draw=playerData[2];
+		lose=playerData[3];
+		giveUp=playerData[4];
 
 		System.out.println("player 情報を取得しました。");
-		System.out.println(playerID+win+draw+lose);
+		System.out.println(playerID+win+draw+lose+giveUp);
 
 
 	}
@@ -35,6 +37,10 @@ public class Player {
 
 	String getDraw(){
 		return draw;
+	}
+
+	String getGiveUp(){
+		return giveUp;
 	}
 
 }
