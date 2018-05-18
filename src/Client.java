@@ -212,6 +212,38 @@ public class Client extends JFrame{
 			break;
 		}
 
+		case 3:{
+			receiveHandler=0;
+
+			String str=msg.substring(1);
+
+			ArrayList<Player> onlinePlayers = new ArrayList<Player>();
+
+			Player player=null;
+
+			player=new Player(str);
+			onlinePlayers.add(player);
+			System.out.println("!");
+
+			try {
+				while(br.ready()) {
+					str=br.readLine();
+					player=new Player(str);
+					onlinePlayers.add(player);
+					System.out.println("!");
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			Player[]  s= onlinePlayers.toArray(new Player[onlinePlayers.size()]);
+
+			menuPanel.playMain(s);
+
+
+			break;
+		}
+
 		}
 	}
 

@@ -75,11 +75,35 @@ class Testserver {
 	        			System.out.println("サーバにメッセージを送信しました");
 					}
 					if(inputLine.equals("212")) {
-						out.println("2");
+						//out.println("2");
+
+						String str;
+						str="2yamada/10/20/30/40";
+
+						for(int i=0;i<20;i++) {
+							str+="\nharuki"+i+"/00";
+						}
 						//out.println("2yamada/10/20/30/40\nharuki/00\numemoto/01");//win=000,lose=001,draw=010,give up(相手が)=011,(自分が)=100
+						out.println(str);
 						out.flush();
 	        			System.out.println("サーバにメッセージを送信しました");
 					}
+					if(inputLine.equals("3")) {
+						//out.println("2");
+
+
+						String str;
+						str="3yamada/10/20/30/40/5";
+
+						for(int i=0;i<20;i++) {
+							str+="\nyamada"+i+"/10/20/30/40/5";
+						}
+						//out.println("3yamada/10/20/30/40/5\nyamada1/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5");//win=000,lose=001,draw=010,give up(相手が)=011,(自分が)=100
+						out.println(str);
+						out.flush();
+	        			System.out.println("サーバにメッセージを送信しました");
+					}
+
 				}
 			}catch(IOException e) {
 				e.printStackTrace();

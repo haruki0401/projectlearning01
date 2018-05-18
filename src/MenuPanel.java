@@ -37,6 +37,24 @@ public class MenuPanel extends JPanel{
 
 	}
 
+	public void backToMenu() {
+		JButton backToMain=new JButton("Back to Menu");
+
+		backToMain.setBounds(50,900,400,50);
+		backToMain.setFont(f);
+		backToMain.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {//login2_button_click_event
+				menuScreen();
+				repaint();
+
+				client.receiveHandler(0);//データ要求キャンセル
+
+			}
+		});
+
+		add(backToMain,0);
+	}
+
 	public void menuScreen() {//メニュ－画面
 		JButton play=new JButton("対局する");
 		JButton search=new JButton("player検索");
@@ -63,7 +81,9 @@ public class MenuPanel extends JPanel{
 		play.setFont(new Font("MS Gothic",Font.PLAIN,50));
 		play.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {//_click_event
-				//
+				client.sendMessage("3");//サーバにメッセージ送信
+
+				client.receiveHandler(1);
 			}
 		});
 
@@ -213,8 +233,9 @@ public class MenuPanel extends JPanel{
 
 		JScrollPane scrollpane = new JScrollPane(resultArea);
 		scrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollpane.getVerticalScrollBar().setUnitIncrement(25);//スクローススピード
 
-		scrollpane.setBounds(50,200,1500-105,675);
+		scrollpane.setBounds(50,250,1500-105,625);
 		scrollpane.setBorder(null);//枠線消す
 
 
@@ -226,29 +247,30 @@ public class MenuPanel extends JPanel{
 
 
 		resultArea.setBackground(Color.GRAY);
+		resultArea.setPreferredSize(new  Dimension(750,50*(s.length)+1));//Task数に合わせてmainPanelのサイズを変更する
 
 
-		resultArea.setPreferredSize(new  Dimension(750,25));//Task数に合わせてmainPanelのサイズを変更する
+
+		//resultArea.setPreferredSize(new  Dimension(750,25));
 
 
-		historyColumn1=new JLabel("playerID");
+		historyColumn1=new JLabel("対戦相手のID");
 		historyColumn1.setHorizontalAlignment(JLabel.CENTER);
 		historyColumn1.setFont(new Font("MS Gothic",Font.PLAIN,40));
-		historyColumn1.setBounds(0,0,700,50);
-		historyColumn1.setForeground(Color.WHITE);
-		historyColumn1.setBackground(Color.BLACK);
+		historyColumn1.setBounds(50,200,700,50);
+		historyColumn1.setForeground(Color.BLACK);
+		historyColumn1.setBackground(Color.BLUE);
         historyColumn1.setOpaque(true);
 
 		historyColumn2=new JLabel("勝敗");
 		historyColumn2.setHorizontalAlignment(JLabel.CENTER);
 		historyColumn2.setFont(new Font("MS Gothic",Font.PLAIN,40));
-		historyColumn2.setBounds(700,0,800-105,50);
-		historyColumn2.setForeground(Color.WHITE);
+		historyColumn2.setBounds(750,200,700-5,50);
+		historyColumn2.setForeground(Color.BLACK);
 		historyColumn2.setBackground(Color.RED);
         historyColumn2.setOpaque(true);
 
-		resultArea.add(historyColumn1);
-		resultArea.add(historyColumn2);
+
 
 
 
@@ -277,21 +299,32 @@ public class MenuPanel extends JPanel{
 	        historyID[i]=new JLabel(name);
 	        historyID[i].setHorizontalAlignment(JLabel.CENTER);
 	        historyID[i].setFont(new Font("MS Gothic",Font.PLAIN,40));
-	        historyID[i].setBounds(0,0+(50*(i+1)),700,50);
-	        historyID[i].setForeground(Color.WHITE);
-	        historyID[i].setBackground(Color.GRAY);
+	        historyID[i].setBounds(0,0+(50*(i)),700,50);
+	        historyID[i].setForeground(Color.BLACK);
+
+	        if((i%2)==0) {
+	        	historyID[i].setBackground(new Color(0,204,255));
+	        }else {
+	        	historyID[i].setBackground(new Color(204,255,255));
+	        }
+
 	        historyID[i].setOpaque(true);
 
 
 	        historyResult[i]=new JLabel(str);
 	        historyResult[i].setHorizontalAlignment(JLabel.CENTER);
 	        historyResult[i].setFont(new Font("MS Gothic",Font.PLAIN,40));
-	        historyResult[i].setBounds(700,0+(50*(i+1)),800-105,50);
-	        historyResult[i].setForeground(Color.WHITE);
-	        historyResult[i].setBackground(Color.PINK);
+	        historyResult[i].setBounds(700,0+(50*(i)),800-105,50);
+	        historyResult[i].setForeground(Color.BLACK);
+
+	        if((i%2)==0) {
+		        historyResult[i].setBackground(new Color(255,153,204));
+	        }else {
+		        historyResult[i].setBackground(Color.PINK);
+	        }
+
 	        historyResult[i].setOpaque(true);
 
-			resultArea.setPreferredSize(new  Dimension(750,25*(i+2)));//Task数に合わせてmainPanelのサイズを変更する
 			resultArea.add(historyID[i]);
 			resultArea.add(historyResult[i]);
 
@@ -300,6 +333,8 @@ public class MenuPanel extends JPanel{
 
 		add(playerID,0);
 		add(playerResult,0);
+		add(historyColumn1,0);
+		add(historyColumn2,0);
 		add(scrollpane,0);
 
 		revalidate();
@@ -326,23 +361,123 @@ public class MenuPanel extends JPanel{
 		repaint();
 	}
 
-	public void backToMenu() {
-		JButton backToMain=new JButton("Back to Menu");
 
-		backToMain.setBounds(50,900,400,50);
-		backToMain.setFont(f);
-		backToMain.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {//login2_button_click_event
-				menuScreen();
-				repaint();
+	public void playMain(Player[] onlinePlayers) {//オンラインプレイヤーの表示
 
-				client.receiveHandler(0);//データ要求キャンセル
+		removeAll();
+		background();
+		backToMenu();
 
-			}
-		});
+		client.receiveHandler(1);//この画面では、常にオファーを受信するため
 
-		add(backToMain,0);
+
+		JLabel title=new JLabel("現在オンラインのプレイヤー");
+
+		title.setHorizontalAlignment(JLabel.CENTER);
+		title.setBounds(0,50,1500,50);
+		title.setFont(new Font("MS Gothic",Font.PLAIN,50));
+		title.setForeground(Color.BLACK);
+
+		JLabel titleMsg=new JLabel("対戦を申し込みたいplayerIDをクリックしてください。");
+
+		titleMsg.setHorizontalAlignment(JLabel.CENTER);
+		titleMsg.setBounds(0,100,1500,50);
+		titleMsg.setFont(new Font("MS Gothic",Font.PLAIN,30));
+		titleMsg.setForeground(Color.WHITE);
+
+		JButton offer=new JButton();//offer来た時に表示されるオファー承認画面への遷移ボタン
+
+		JPanel playerArea=new JPanel();
+		playerArea.setLayout(null);
+
+		JButton[] onlineID=new JButton[onlinePlayers.length];
+		JLabel[] onlineResult=new JLabel[onlinePlayers.length];
+
+		JLabel onlineColumn1;
+		JLabel onlineColumn2;
+
+		JScrollPane scrollpane = new JScrollPane(playerArea);
+		scrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollpane.getVerticalScrollBar().setUnitIncrement(25);//スクローススピード
+
+		scrollpane.setBounds(50,250,1500-105,625);
+		scrollpane.setBorder(null);//枠線消す
+
+
+
+		playerArea.setBackground(Color.GRAY);
+		playerArea.setPreferredSize(new  Dimension(750,50*(onlinePlayers.length)+1));//Task数に合わせてmainPanelのサイズを変更する
+
+
+		onlineColumn1=new JLabel("対戦相手のID");
+		onlineColumn1.setHorizontalAlignment(JLabel.CENTER);
+		onlineColumn1.setFont(new Font("MS Gothic",Font.PLAIN,40));
+		onlineColumn1.setBounds(50,200,700,50);
+		onlineColumn1.setForeground(Color.BLACK);
+		onlineColumn1.setBackground(Color.BLUE);
+		onlineColumn1.setOpaque(true);
+
+		onlineColumn2=new JLabel("勝敗");
+		onlineColumn2.setHorizontalAlignment(JLabel.CENTER);
+		onlineColumn2.setFont(new Font("MS Gothic",Font.PLAIN,40));
+		onlineColumn2.setBounds(750,200,700-5,50);
+		onlineColumn2.setForeground(Color.BLACK);
+		onlineColumn2.setBackground(Color.RED);
+		onlineColumn2.setOpaque(true);
+
+
+
+		for(int i=0;i<onlinePlayers.length;i++){
+	        System.out.println(i);
+
+	        onlineID[i]=new JButton(onlinePlayers[i].getID());
+	        onlineID[i].setHorizontalAlignment(JLabel.CENTER);
+	        onlineID[i].setFont(new Font("MS Gothic",Font.PLAIN,40));
+	        onlineID[i].setBounds(0,0+(50*(i)),700,50);
+	        onlineID[i].setForeground(Color.BLACK);
+
+	        if((i%2)==0) {
+	        	onlineID[i].setBackground(new Color(0,204,255));
+	        }else {
+	        	onlineID[i].setBackground(new Color(204,255,255));
+	        }
+
+	        onlineID[i].setOpaque(true);
+
+
+	        onlineResult[i]=new JLabel("勝: "+onlinePlayers[i].getWin()+" 負: "+onlinePlayers[i].getLose()+" 分: "+onlinePlayers[i].getDraw()+" 投了: "+onlinePlayers[i].getGiveUp());
+	        onlineResult[i].setHorizontalAlignment(JLabel.CENTER);
+	        onlineResult[i].setFont(new Font("MS Gothic",Font.PLAIN,40));
+	        onlineResult[i].setBounds(700,0+(50*(i)),800-105,50);
+	        onlineResult[i].setForeground(Color.BLACK);
+
+	        if((i%2)==0) {
+	        	onlineResult[i].setBackground(new Color(255,153,204));
+	        }else {
+	        	onlineResult[i].setBackground(Color.PINK);
+	        }
+
+	        onlineResult[i].setOpaque(true);
+
+	        //playerArea.setPreferredSize(new  Dimension(750,25*(i+2)));//Task数に合わせてmainPanelのサイズを変更する
+	        playerArea.add(onlineID[i]);
+	        playerArea.add(onlineResult[i]);
+
+		}
+
+		add(title,0);
+		add(titleMsg,0);
+		add(onlineColumn1,0);
+		add(onlineColumn2,0);
+		add(scrollpane,0);
+
+		revalidate();
+
+		repaint();
+
 	}
+
+
 
 
 }
