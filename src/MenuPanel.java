@@ -50,12 +50,12 @@ public class MenuPanel extends JPanel{
 		background();
 
 		playerID.setHorizontalAlignment(JLabel.CENTER);
-		playerID.setBounds(500,50,500,50);
+		playerID.setBounds(0,50,1500,50);
 		playerID.setFont(new Font("MS Gothic",Font.PLAIN,50));
 		playerID.setForeground(Color.YELLOW);
 
 		playerResult.setHorizontalAlignment(JLabel.CENTER);
-		playerResult.setBounds(500,100,500,50);
+		playerResult.setBounds(0,100,1500,50);
 		playerResult.setFont(new Font("MS Gothic",Font.PLAIN,50));
 		playerResult.setForeground(Color.YELLOW);
 
@@ -180,27 +180,37 @@ public class MenuPanel extends JPanel{
 	public void results(Player player,String[] s) {//戦績表示　引数にplayer型の配列
 		//スクロールバー(表示する条件も分岐できれば尚良し)の追加が必要
 
-		JLabel menuBg = new JLabel("aiueo");
+		JLabel menuBg = new JLabel();
 
 		menuBg.setOpaque(true);
 		menuBg.setBounds(0,125,1500,750);
 		menuBg.setBackground(Color.BLACK);
+
+		JLabel playerID=new JLabel("ID: "+my.getID()+" さん");
+
+		playerID.setHorizontalAlignment(JLabel.CENTER);
+		playerID.setBounds(0,50,1500,50);
+		playerID.setFont(new Font("MS Gothic",Font.PLAIN,50));
+		playerID.setForeground(Color.YELLOW);
 
 		JLabel playerResult=new JLabel("勝: "+player.getWin()
 			+" 負: "+player.getLose()+" 分: "+player.getDraw()
 			+" 投了: "+player.getGiveUp());
 
 		playerResult.setHorizontalAlignment(JLabel.CENTER);
-		playerResult.setBounds(500,100,500,50);
+		playerResult.setBounds(0,100,1500,50);
 		playerResult.setFont(new Font("MS Gothic",Font.PLAIN,50));
 		playerResult.setForeground(Color.YELLOW);
 
 		JPanel resultArea=new JPanel();
 	    resultArea.setLayout(null);
 
-	    JLabel errorMsg=new JLabel();
+		JLabel historyColumn1;
+		JLabel historyColumn2;
 
-		JLabel[] result=new JLabel[s.length];
+		JLabel[] historyID=new JLabel[s.length];
+		JLabel[] historyResult=new JLabel[s.length];
+
 		JScrollPane scrollpane = new JScrollPane(resultArea);
 		scrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -221,23 +231,74 @@ public class MenuPanel extends JPanel{
 		resultArea.setPreferredSize(new  Dimension(750,25));//Task数に合わせてmainPanelのサイズを変更する
 
 
-		/*if(players.length==0) {
-			//errorMsg
-		}*/
+		historyColumn1=new JLabel("playerID");
+		historyColumn1.setHorizontalAlignment(JLabel.CENTER);
+		historyColumn1.setFont(new Font("MS Gothic",Font.PLAIN,40));
+		historyColumn1.setBounds(0,0,700,50);
+		historyColumn1.setForeground(Color.WHITE);
+		historyColumn1.setBackground(Color.BLACK);
+        historyColumn1.setOpaque(true);
+
+		historyColumn2=new JLabel("勝敗");
+		historyColumn2.setHorizontalAlignment(JLabel.CENTER);
+		historyColumn2.setFont(new Font("MS Gothic",Font.PLAIN,40));
+		historyColumn2.setBounds(700,0,800-105,50);
+		historyColumn2.setForeground(Color.WHITE);
+		historyColumn2.setBackground(Color.RED);
+        historyColumn2.setOpaque(true);
+
+		resultArea.add(historyColumn1);
+		resultArea.add(historyColumn2);
+
+
 
 		for(int i=0;i<s.length;i++){
 	        System.out.println(i);
-	        result[i]=new JLabel("対戦相手: "+"aiueo"+" | "+"WIN"+i);
-	        result[i].setHorizontalAlignment(JLabel.CENTER);
-			result[i].setFont(new Font("MS Gothic",Font.PLAIN,25));
-			result[i].setForeground(Color.WHITE);
-	        result[i].setBounds(50,0+(25*i),500,50);
+
+	        String name=s[i].split("/")[0];
+	        String r=s[i].split("/")[1];
+	        String str=null;
+
+	        //win=00,lose=01,draw=10,give up=11
+	        if(r.equals("00")) {
+	        	str="勝利";
+	        }
+	        else if(r.equals("01")) {
+	        	str="敗北";
+	        }
+	        else if(r.equals("10")) {
+	        	str="引き分け";
+	        }
+	        else if(r.equals("11")) {
+	        	str="投了";
+	        }
+
+
+	        historyID[i]=new JLabel(name);
+	        historyID[i].setHorizontalAlignment(JLabel.CENTER);
+	        historyID[i].setFont(new Font("MS Gothic",Font.PLAIN,40));
+	        historyID[i].setBounds(0,0+(50*(i+1)),700,50);
+	        historyID[i].setForeground(Color.WHITE);
+	        historyID[i].setBackground(Color.GRAY);
+	        historyID[i].setOpaque(true);
+
+
+	        historyResult[i]=new JLabel(str);
+	        historyResult[i].setHorizontalAlignment(JLabel.CENTER);
+	        historyResult[i].setFont(new Font("MS Gothic",Font.PLAIN,40));
+	        historyResult[i].setBounds(700,0+(50*(i+1)),800-105,50);
+	        historyResult[i].setForeground(Color.WHITE);
+	        historyResult[i].setBackground(Color.PINK);
+	        historyResult[i].setOpaque(true);
 
 			resultArea.setPreferredSize(new  Dimension(750,25*(i+2)));//Task数に合わせてmainPanelのサイズを変更する
-			resultArea.add(result[i]);
+			resultArea.add(historyID[i]);
+			resultArea.add(historyResult[i]);
+
 		}
 
 
+		add(playerID,0);
 		add(playerResult,0);
 		add(scrollpane,0);
 
@@ -245,6 +306,24 @@ public class MenuPanel extends JPanel{
 
 		repaint();
 
+	}
+
+	public void searchError() {
+		removeAll();
+		background();
+		backToMenu();
+
+		JLabel errorMsg=new JLabel("検索されたIDのplayerは存在しません。");
+
+
+		errorMsg.setHorizontalAlignment(JLabel.CENTER);
+		errorMsg.setBounds(500,200,500,50);
+		errorMsg.setFont(new Font("MS Gothic",Font.PLAIN,25));
+		errorMsg.setForeground(Color.RED);
+
+		add(errorMsg,0);
+
+		repaint();
 	}
 
 	public void backToMenu() {

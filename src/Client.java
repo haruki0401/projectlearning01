@@ -198,11 +198,15 @@ public class Client extends JFrame{
 				e.printStackTrace();
 			}
 
+
+
 			String[]  s= results.toArray(new String[results.size()]);
 
-			//System.out.println(p.length);
-
-			menuPanel.results(player,s);
+			if(player==null) {
+				menuPanel.searchError();
+			}else {
+				menuPanel.results(player,s);
+			}
 
 
 			break;
