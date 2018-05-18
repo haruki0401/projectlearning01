@@ -3,11 +3,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -29,19 +25,14 @@ public class MenuPanel extends JPanel{
 	}
 
 	public void background() {//簡単のために背景表示のみメソッドを分割
-		BufferedImage bgImage=null;
-
-		try {
-			bgImage=ImageIO.read(new File("./bg.png"));
-		}catch(Exception e) {
-			e.printStackTrace();
-			bgImage=null;
-		}
 
 
-		JLabel bg = new JLabel(new ImageIcon(bgImage));
+		JLabel bg = new JLabel();
 
+		bg.setOpaque(true);
 		bg.setBounds(0,0,1500,1000);
+		bg.setBackground(new Color(34,139,34));
+
 		add(bg,0);
 
 	}
@@ -103,16 +94,9 @@ public class MenuPanel extends JPanel{
 	}
 
 	public void search() {//探したいプレイヤーの入力画面
-		BufferedImage menuBgImage=null;
 
-		try {
-			menuBgImage=ImageIO.read(new File("./menubg.png"));
-		}catch(Exception e) {
-			e.printStackTrace();
-			menuBgImage=null;
-		}
 
-		JLabel menuBg = new JLabel(new ImageIcon(menuBgImage));
+		JLabel menuBg = new JLabel();
 		JLabel msg=new JLabel("検索したいplayerIDを入力してください。");
 		JTextField searchID=new JTextField(16);
 		JButton search=new JButton("検索");
@@ -125,7 +109,9 @@ public class MenuPanel extends JPanel{
 		background();
 		backToMenu();
 
+		menuBg.setOpaque(true);
 		menuBg.setBounds(0,125,1500,750);
+		menuBg.setBackground(Color.BLACK);
 
 		msg.setHorizontalAlignment(JLabel.CENTER);
 		msg.setBounds(500,200,500,50);
@@ -151,9 +137,9 @@ public class MenuPanel extends JPanel{
 
 
 					//debug用
-					Player[] p=new Player[10];
+					Player[] p=new Player[50];
 
-					for(int i=0;i<10;i++) {
+					for(int i=0;i<50;i++) {
 						p[i]=my;
 
 					}
@@ -193,25 +179,22 @@ public class MenuPanel extends JPanel{
 
 	public void results(Player[] players) {//戦績表示　引数にplayer型の配列
 		//スクロールバー(表示する条件も分岐できれば尚良し)の追加が必要
-		BufferedImage menuBgImage=null;
 
-		try {
-			menuBgImage=ImageIO.read(new File("./menubg.png"));
-		}catch(Exception e) {
-			e.printStackTrace();
-			menuBgImage=null;
-		}
+		JLabel menuBg = new JLabel("aiueo");
 
-		JLabel menuBg = new JLabel(new ImageIcon(menuBgImage));
+		menuBg.setOpaque(true);
+		menuBg.setBounds(0,125,1500,750);
+		menuBg.setBackground(Color.BLACK);
 
 		JPanel resultArea=new JPanel();
-		//SpringLayout layout1 = new SpringLayout();
-	    //resultArea.setLayout(null);
+	    resultArea.setLayout(null);
 
 		JLabel[] result=new JLabel[players.length];
 		JScrollPane scrollpane = new JScrollPane(resultArea);
-		resultArea.setPreferredSize(new Dimension(100, 100));
+		scrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
+		scrollpane.setBounds(50,200,1500-105,675);
+		scrollpane.setBorder(null);//枠線消す
 
 
 
@@ -220,53 +203,35 @@ public class MenuPanel extends JPanel{
 		backToMenu();
 
 
+		menuBg.setHorizontalAlignment(JLabel.CENTER);
+
 		menuBg.setBounds(0,125,1500,750);
+		menuBg.setBackground(Color.BLUE);
 
-		/*resultArea.setBounds(375,125,750,750);
-		resultArea.setBackground(Color.BLUE);*/
-
-
-
-		/*result[0]=new JLabel("対戦相手: "+"aiueo"+" | "+"WIN");
-		result[1]=new JLabel("対戦相手: "+"aiueo"+" | "+"LOSE");*/
-
-		/*result[0].setHorizontalAlignment(JLabel.CENTER);
-		result[0].setPreferredSize(new Dimension(500,30));
-		//result[0].setBounds(0,200,500,50);
-		result[0].setFont(new Font("MS Gothic",Font.PLAIN,25));
-		result[0].setForeground(Color.WHITE);
-
-		result[1].setHorizontalAlignment(JLabel.CENTER);
-		result[1].setPreferredSize(new Dimension(500,30));
-		//result[1].setBounds(0,300,500,50);
-		result[1].setFont(new Font("MS Gothic",Font.PLAIN,25));
-		result[1].setForeground(Color.WHITE);*/
+		resultArea.setBackground(Color.GRAY);
 
 
-		for(int i=0;i<10;i++){
+		resultArea.setPreferredSize(new  Dimension(750,25));//Task数に合わせてmainPanelのサイズを変更する
+
+
+		for(int i=0;i<50;i++){
 			//if(i>0) {
 	        System.out.println(i);
-	        result[i]=new JLabel("対戦相手: "+"aiueo"+" | "+"WIN");
+	        result[i]=new JLabel("対戦相手: "+"aiueo"+" | "+"WIN"+i);
 	        result[i].setHorizontalAlignment(JLabel.CENTER);
-			//result[0].setPreferredSize(new Dimension(500,30));
-			//result[0].setBounds(0,200,500,50);
 			result[i].setFont(new Font("MS Gothic",Font.PLAIN,25));
 			result[i].setForeground(Color.WHITE);
-	        result[i].setBounds(50,300+(100*i),500,50);
+	        result[i].setBounds(50,0+(25*i),500,50);
 			//}
 
-			//resultArea.setPreferredSize(new Dimension(720,61*(i+1)));//Task数に合わせてmainPanelのサイズを変更する
+			resultArea.setPreferredSize(new  Dimension(750,25*(i+2)));//Task数に合わせてmainPanelのサイズを変更する
 			resultArea.add(result[i]);
 		}
 
-		resultArea.add(scrollpane);
 
-		/*resultArea.add(result[0]);
-		resultArea.add(result[1]);*/
+		add(scrollpane,0);
 
-		//add(menuBg,0);
-
-		add(resultArea,0);
+		revalidate();
 
 		repaint();
 

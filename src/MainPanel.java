@@ -118,16 +118,7 @@ public class MainPanel extends JPanel{
 		background();
 		backToMain();
 
-		BufferedImage loginBgImage=null;
-
-		try {
-			loginBgImage=ImageIO.read(new File("./loginbg.png"));
-		}catch(Exception e) {
-			e.printStackTrace();
-			loginBgImage=null;
-		}
-
-		JLabel loginBg = new JLabel(new ImageIcon(loginBgImage));
+		JLabel loginBg = new JLabel();
 		JLabel loginMsg=new JLabel("プレイヤー情報を入力してください。");
 		JLabel idMsg=new JLabel("id");
 		JLabel passMsg=new JLabel("pass");
@@ -137,7 +128,10 @@ public class MainPanel extends JPanel{
 		JLabel errorMsg=new JLabel("");//入力エラー時のメッセージ
 
 
+
+		loginBg.setOpaque(true);
 		loginBg.setBounds(375,125,750,750);
+		loginBg.setBackground(Color.BLACK);
 
 
 		loginMsg.setHorizontalAlignment(JLabel.CENTER);
