@@ -20,6 +20,8 @@ public class MenuPanel extends JPanel{
 
 	Font f=new Font("Arial",Font.PLAIN,50);
 
+	int screenIsPlayMain=0;//0:false,1:true
+
 
 	MenuPanel(Client cl,Player my,String name){
 		client=cl;
@@ -83,6 +85,9 @@ public class MenuPanel extends JPanel{
 	}
 
 	public void menuScreen() {//メニュ－画面
+		screenIsPlayMain=0;
+
+
 		JButton play=new JButton("対局する");
 		JButton search=new JButton("player検索");
 		JButton signout=new JButton("Sign Out");
@@ -389,11 +394,14 @@ public class MenuPanel extends JPanel{
 	}
 
 
-	public void playMain(Player[] onlinePlayers) {//オンラインプレイヤーの表示
+	public void playMain(Player[] onlinePlayers,Player[] offerPlayers) {//オンラインプレイヤーの表示
+		screenIsPlayMain=1;
+
 
 		removeAll();
 		background();
 		backToMenu();
+
 
 		client.receiveHandler(1);//この画面では、常にオファーを受信するため
 
@@ -537,6 +545,8 @@ public class MenuPanel extends JPanel{
 	}
 
 	public void playSelect(String id) {//オファーを送るかの画面
+		screenIsPlayMain=0;
+
 		removeAll();
 		background();
 
@@ -617,6 +627,11 @@ public class MenuPanel extends JPanel{
 	public void seceltOffer(Player[] onlinePlayers) {//受信したオファー一覧の表示
 
 	}
+
+	public int getScreenIsPlayMain() {
+		return screenIsPlayMain;
+	}
+
 
 	class clickID implements ActionListener{//idをクリックしたときのアクションイベント
 		 public void actionPerformed(ActionEvent e) {

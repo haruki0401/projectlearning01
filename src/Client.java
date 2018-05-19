@@ -23,6 +23,7 @@ public class Client extends JFrame{
 	//private String tempPlayerID;//一時的なIDの保存
 
 	private Player my;
+	private ArrayList<Player> getOfferPlayer = new ArrayList<Player>();//offer人数
 
 	//panel作成
 	public String[] PanelNames= {"main","menu","Othello"};
@@ -117,6 +118,8 @@ public class Client extends JFrame{
 
 	public void classifyMsg(String msg,BufferedReader br) {//ここで受信データの種類判別
 		System.out.println("サーバからメッセージ " + msg + " を受信しました"); //テスト用標準出力
+
+
 
 		int type;
 
@@ -218,9 +221,12 @@ public class Client extends JFrame{
 
 			Player player=null;
 
-			player=new Player(str);
-			onlinePlayers.add(player);
-			System.out.println("!");
+
+			if(!(str.equals(""))) {
+				player=new Player(str);
+				onlinePlayers.add(player);
+				System.out.println("!");
+			}
 
 			try {
 				while(br.ready()) {
@@ -233,15 +239,47 @@ public class Client extends JFrame{
 				e.printStackTrace();
 			}
 
-			Player[]  s= onlinePlayers.toArray(new Player[onlinePlayers.size()]);
+			Player[]  onlines= onlinePlayers.toArray(new Player[onlinePlayers.size()]);
 
-			menuPanel.playMain(s);
+			Player[]  offers= getOfferPlayer.toArray(new Player[getOfferPlayer.size()]);
+
+
+			menuPanel.playMain(onlines,offers);
 
 
 			break;
 		}
 
 		case 7:{
+
+			String str=msg.substring(2);
+
+
+			Player player=null;
+
+
+			if(msg.charAt(1)=='0') {//オファー受付
+				player=new Player(str);
+				getOfferPlayer.add(player);
+				System.out.println("オファー受付 from "+player.getID());
+			}
+			else if(msg.charAt(1)=='1') {//オファーキャンセル受付
+				player=new Player(str);
+
+				for(int i=0;i<getOfferPlayer.size();i++) {
+					if(!(player.getID().equals(getOfferPlayer.get(i).getID()))) {
+						getOfferPlayer.remove(i);
+						System.out.println("オファーキャンセル受付 from "+player.getID());
+					}
+				}
+			}
+
+			//Player[]  s= getOfferPlayer.toArray(new Player[getOfferPlayer.size()]);
+
+			if(menuPanel.getScreenIsPlayMain()==1) {
+				sendMessage("3");//更新ついでにnow playerも更新
+			}
+
 
 			break;
 		}
@@ -284,6 +322,10 @@ public class Client extends JFrame{
 		}
 	}
 
+	public void getOffer() {
+
+	}
+
 
 	public static void main(String[] args) {
 		Client client=new Client();
@@ -295,6 +337,7 @@ public class Client extends JFrame{
 		int port=Integer.parseInt(args[1]);
 
 		client.connectServer(ipAddress,port);
+
 
 	}
 

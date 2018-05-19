@@ -99,6 +99,8 @@ class Testserver {
 							str+="\nyamada"+i+"/10/20/30/40/5";
 						}
 						//out.println("3yamada/10/20/30/40/5\nyamada1/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5");//win=000,lose=001,draw=010,give up(相手が)=011,(自分が)=100
+
+						//str="3";
 						out.println(str);
 						out.flush();
 	        			System.out.println("サーバにメッセージを送信しました");
@@ -119,9 +121,20 @@ class Testserver {
 
 
 	public static void main(String[] args) {
+
+		/*ArrayList<Player> getOfferPlayer = new ArrayList<Player>();//offer人数
+		Player[]  s= getOfferPlayer.toArray(new Player[getOfferPlayer.size()]);
+
+
+		System.out.println(s.length);*/
+
+
 		Testserver server = new Testserver();
 		String ipAddress=args[0];
 		server.accept(ipAddress);
+
+
+
     }
 
 
