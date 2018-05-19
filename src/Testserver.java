@@ -67,7 +67,7 @@ class Testserver {
 					String inputLine=br.readLine();
 					if(inputLine!=null) {
 						System.out.println("!");
-						System.out.println(inputLine);
+						System.out.println("受信メッセージ: "+inputLine);
 					}
 					if(inputLine.equals("11_2")) {
 						out.println("11haruki/10/20/30/40");
@@ -100,6 +100,11 @@ class Testserver {
 						}
 						//out.println("3yamada/10/20/30/40/5\nyamada1/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5\nyamada2/10/20/30/40/5");//win=000,lose=001,draw=010,give up(相手が)=011,(自分が)=100
 						out.println(str);
+						out.flush();
+	        			System.out.println("サーバにメッセージを送信しました");
+					}
+					if(inputLine.equals("7yamada")) {
+						out.println("80");
 						out.flush();
 	        			System.out.println("サーバにメッセージを送信しました");
 					}

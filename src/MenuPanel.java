@@ -3,7 +3,11 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -45,7 +49,7 @@ public class MenuPanel extends JPanel{
 		backToMain.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {//login2_button_click_event
 				menuScreen();
-				repaint();
+				//repaint();
 
 				client.receiveHandler(0);//データ要求キャンセル
 
@@ -53,6 +57,29 @@ public class MenuPanel extends JPanel{
 		});
 
 		add(backToMain,0);
+	}
+
+	public void cancelOffer(int i) {//0:自分がキャンセル, 1:相手にキャンセルされる
+		JButton cancelOffer=new JButton("Back");
+
+		cancelOffer.setBounds(50,900,400,50);
+		cancelOffer.setFont(f);
+		cancelOffer.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {//login2_button_click_event
+
+				if(i==0) {
+					client.sendMessage("7");
+				}
+
+				reloadPlayMain();
+
+				//repaint();
+
+			}
+		});
+
+		add(cancelOffer,0);
+
 	}
 
 	public void menuScreen() {//メニュ－画面
@@ -385,7 +412,29 @@ public class MenuPanel extends JPanel{
 		titleMsg.setFont(new Font("MS Gothic",Font.PLAIN,30));
 		titleMsg.setForeground(Color.WHITE);
 
-		JButton offer=new JButton();//offer来た時に表示されるオファー承認画面への遷移ボタン
+		JButton getOffer=new JButton();//offer来た時に表示されるオファー承認画面への遷移ボタン
+
+		BufferedImage reloadImage=null;
+
+		try {
+			reloadImage=ImageIO.read(new File("./reload.png"));
+		}catch(Exception e) {
+			e.printStackTrace();
+			reloadImage=null;
+		}
+
+		//ImageIcon icon = new ImageIcon("./reload.png");
+
+		JButton reload=new JButton(new ImageIcon(reloadImage));//更新ボタン
+
+		reload.setBounds(50,50,100,100);
+		//reload.setContentAreaFilled(false);
+		reload.setBackground(Color.WHITE);
+		reload.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {//login_button_click_event
+				reloadPlayMain();
+			}
+		});
 
 		JPanel playerArea=new JPanel();
 		playerArea.setLayout(null);
@@ -459,12 +508,15 @@ public class MenuPanel extends JPanel{
 
 	        onlineResult[i].setOpaque(true);
 
+	        onlineID[i].addActionListener(new clickID());//actionlister clickIDへ飛ばす
+
 	        //playerArea.setPreferredSize(new  Dimension(750,25*(i+2)));//Task数に合わせてmainPanelのサイズを変更する
 	        playerArea.add(onlineID[i]);
 	        playerArea.add(onlineResult[i]);
 
 		}
 
+		add(reload,0);
 		add(title,0);
 		add(titleMsg,0);
 		add(onlineColumn1,0);
@@ -475,9 +527,102 @@ public class MenuPanel extends JPanel{
 
 		repaint();
 
+
+
 	}
 
+	public void reloadPlayMain(){//明示化するためにわざとこのメソッド追加
+		client.sendMessage("3");//サーバにメッセージ送信
+
+	}
+
+	public void playSelect(String id) {//オファーを送るかの画面
+		removeAll();
+		background();
+
+		JLabel playerID=new JLabel(id);
+		JLabel msg=new JLabel("さんに対戦を申し込みますか？");
+
+		JButton yes=new JButton("はい");
+		JButton no=new JButton("いいえ");
+
+		playerID.setHorizontalAlignment(JLabel.CENTER);
+		playerID.setBounds(0,200,1500,100);
+		playerID.setFont(new Font("MS Gothic",Font.PLAIN,75));
+		playerID.setForeground(Color.YELLOW);
+
+		msg.setHorizontalAlignment(JLabel.CENTER);
+		msg.setBounds(0,400,1500,100);
+		msg.setFont(new Font("MS Gothic",Font.PLAIN,50));
+		msg.setForeground(Color.WHITE);
+
+		yes.setHorizontalAlignment(JLabel.CENTER);
+		yes.setBounds(300,700,300,50);
+		yes.setFont(new Font("MS Gothic",Font.PLAIN,50));
+		yes.setForeground(Color.BLACK);
+
+		yes.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {//_click_event
+				remove(playerID);
+				remove(yes);
+				remove(no);
+
+				repaint();
+
+				client.sendMessage("7"+id);
+
+				cancelOffer(0);
+
+				msg.setText(id+" さんからの返事を待っています。");
+
+			}
+		});
+
+		no.setHorizontalAlignment(JLabel.CENTER);
+		no.setBounds(800,700,300,50);
+		no.setFont(new Font("MS Gothic",Font.PLAIN,50));
+		no.setForeground(Color.BLACK);
+
+		no.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {//_click_event
+				reloadPlayMain();
+			}
+		});
+
+		add(playerID,0);
+		add(msg,0);
+		add(yes,0);
+		add(no,0);
+
+		repaint();
+	}
+
+	public void opponentCancel() {//相手がオファーをキャンセルなど
+		removeAll();
+		background();
+		cancelOffer(1);
 
 
+		JLabel msg=new JLabel("オファーがキャンセルされました。");
+
+		msg.setHorizontalAlignment(JLabel.CENTER);
+		msg.setBounds(0,400,1500,100);
+		msg.setFont(new Font("MS Gothic",Font.PLAIN,50));
+		msg.setForeground(Color.RED);
+
+		add(msg,0);
+		repaint();
+	}
+
+	public void seceltOffer(Player[] onlinePlayers) {//受信したオファー一覧の表示
+
+	}
+
+	class clickID implements ActionListener{//idをクリックしたときのアクションイベント
+		 public void actionPerformed(ActionEvent e) {
+			 playSelect(e.getActionCommand());
+			 //System.out.println(e.getActionCommand());//test
+		 }
+	}
 
 }

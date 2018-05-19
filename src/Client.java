@@ -114,9 +114,6 @@ public class Client extends JFrame{
 		}
 	}
 
-	/*public void getTempPlayerID(String p) {
-		tempPlayerID=p;
-	}*/
 
 	public void classifyMsg(String msg,BufferedReader br) {//ここで受信データの種類判別
 		System.out.println("サーバからメッセージ " + msg + " を受信しました"); //テスト用標準出力
@@ -240,6 +237,25 @@ public class Client extends JFrame{
 
 			menuPanel.playMain(s);
 
+
+			break;
+		}
+
+		case 7:{
+
+			break;
+		}
+
+		case 8:{
+			if(msg.equals("80")) {
+				//オファーキャンセルなどのエラー、onlinePlayerに戻る
+				menuPanel.opponentCancel();
+			}
+			else if(msg.equals("81")) {
+				receiveHandler=0;
+
+				//マッチング成立、オセロパネルに遷移
+			}
 
 			break;
 		}
