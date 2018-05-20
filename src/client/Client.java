@@ -32,6 +32,8 @@ public class Client extends JFrame{
 	MainPanel mainPanel=new MainPanel(this,PanelNames[0]);
 	MenuPanel menuPanel;
 
+	OthelloPanel othelloPanel;
+
 
 	public Client() {//コンストラクタ
 		this.add(mainPanel);
@@ -159,11 +161,19 @@ public class Client extends JFrame{
 
 				menuPanel=new MenuPanel(this,my,PanelNames[1]);
 
+				//test
+
+				//othelloPanel=new OthelloPanel(1,this);
+
+
+
 				/*this.add(menuPanel);
 				menuPanel.setLayout(null);
 				menuPanel.setVisible(true);*/
 
 				changePanel(0,1);
+
+
 
 				menuPanel.menuScreen();
 
@@ -309,6 +319,7 @@ public class Client extends JFrame{
 			this.remove(menuPanel);
 		}
 
+
 		if(j==0) {
 			this.add(mainPanel,0);
 			mainPanel.setLayout(null);
@@ -320,12 +331,18 @@ public class Client extends JFrame{
 			menuPanel.setLayout(null);
 			menuPanel.setVisible(true);
 			this.revalidate();
+
+
+			//test
+			/*this.add(othelloPanel,0);
+			othelloPanel.setVisible(true);
+			othelloPanel.setLayout(null);
+			this.revalidate();*/
 		}
-	}
 
-	public void getOffer() {
 
 	}
+
 
 
 	public static void main(String[] args) {

@@ -1,7 +1,13 @@
 package server;
 
-import java.io.*;// InputStreamなどに必要
-import java.net.*;// ServerSocketに必要
+
+// InputStreamなどに必要
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+// ServerSocketに必要
+import java.net.Socket;
 
 //データ送受信スレッド
 public class Receiver extends Thread{
@@ -16,16 +22,17 @@ public class Receiver extends Thread{
 	private final static int SEND_OFFER = 7;      // 対戦相手へのオファー
 	private final static int ACCEPT_OFFER = 8;    // オファーを受ける
 	private final static int DISCONNECTION = 9;   // 対戦相手が通信切断（サーバから送信のみ）
-	
-	protected PlayerData player = new PlayerData();
+
+
+	PlayerData player = new PlayerData();
 	protected int myNumber;
-	
-	
+
+
 	private InputStreamReader sisr; //受信データ用文字ストリーム
 	private BufferedReader br; //文字ストリーム用のバッファ
 	protected PrintWriter printWriter; //データ送信用オブジェクト
 	private Server server;
-	
+
 	Receiver (Socket socket, int num, Server server){
 		this.server = server;
 		try{
@@ -50,19 +57,38 @@ public class Receiver extends Thread{
 						case NEW_PLAYER:{
 							String str1 = inputLine.substring(1);
 							while((inputLine = br.readLine()) == null);
-							if(server.isNotUsed(str1, inputLine, player))
+
+							System.out.println(str1+"/"+inputLine);
+
+							if(server.isNotUsed(str1, inputLine, player,myNumber))
 								printWriter.println("01");
 							else
 								printWriter.println("00");
+
+							System.out.println(player.sendPlayerData());
+
+							printWriter.flush();
 							break;
 						}
 						case LOGIN:{
 							String str1 = inputLine.substring(1);
 							while((inputLine = br.readLine()) == null);
-							if(server.inputText(str1, inputLine, player))
-								printWriter.println("11");
-							else
+
+							System.out.println(str1+"/"+inputLine);
+
+
+							String msg=server.inputText(str1, inputLine, player,myNumber);
+
+
+							if(msg.equals("0"))
 								printWriter.println("10");
+							else {
+
+								printWriter.println("11"+msg);
+							}
+
+							System.out.println(player.sendPlayerData());
+
 							printWriter.flush();
 							break;
 						}
@@ -73,13 +99,12 @@ public class Receiver extends Thread{
 							break;
 						}
 						case SEND_NOW_PLAYERS:{
-							char c = inputLine.charAt(1);
-							if(c == '0')
-								printWriter.println(server.allLoginPlayerData());
-							else if( c == '1')
-								printWriter.println(server.allPlayerData());
-							else
-								System.out.println("SEND_NOW_PLAYERSの受信データの2文字目が不適です");
+							//char c = inputLine.charAt(1);
+							//if(c == '0')
+							printWriter.println(server.allLoginPlayerData());
+
+							System.out.println(server.allLoginPlayerData());
+
 							printWriter.flush();
 							break;
 						}
@@ -122,6 +147,7 @@ public class Receiver extends Thread{
 							// 同時実行制御を入れるために、関数へ
 							if(server.acceptOffer(n, oppositeNum)){
 								printWriter.println("81");
+								printWriter.flush();
 								server.startJudge(n, oppositeNum);
 							}
 							else

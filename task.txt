@@ -55,3 +55,11 @@ umemoto haruki [14:13]
 
 umemoto haruki [14:46]
 receivehandlerちゃんとなってるか
+
+
+
+panelName　不必要か？
+
+receiver.javaでprintWriter.flush();あるのとないととまちまち
+
+id passに/が入ってないかの確認

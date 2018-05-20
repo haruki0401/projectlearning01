@@ -2,8 +2,8 @@ package server;
 
 public class PlayerData {
 	// データ類
-	protected String name;
-	private String password;
+	protected String id;
+	private String pass;
 	protected int numWin = 0;
 	protected int numDraw = 0;
 	protected int numLose = 0;
@@ -24,31 +24,34 @@ public class PlayerData {
 	PlayerData(){}
 	// 新規作成用
 	PlayerData(String id, String pass){
-		name = id; password = pass;
+		this.id = id; this.pass = pass;
 	}
 	// ログイン用
 	PlayerData(String str){
-		StringBuffer strBuf = new StringBuffer(str);
+		//StringBuffer strBuf = new StringBuffer(str);
 		// 分割文字は一番最初に書く
-		this.divideKey = strBuf.charAt(0);
+		//this.divideKey = strBuf.charAt(0);
 		// 各分割文字列の長さ（最後の1つ先の数字）
+
+		String[] data=str.split("/");
+
 		int len;
 		String s;
-		for(int i = 0;;i++){
+		/*for(int i = 0;;i++){
 			if(i > NUM_ELEMENT - 1)
 				break;
 			strBuf.delete(0, 1);
-			len = strBuf.indexOf("" + divideKey);
+			len = strBuf.indexOf("" + '/');
 			if(len < 0)
 				s = strBuf.substring(0);
 			else
 				s = strBuf.substring(0, len);
 			switch(i){
 			case 0:
-				name = s;
+				id = s;
 				break;
 			case 1:
-				password = s;
+				pass = s;
 				break;
 			case 2:
 				numWin = Integer.parseInt(s);
@@ -65,15 +68,28 @@ public class PlayerData {
 				System.out.println("区切り記号が多すぎます(" + i + "個)");
 				break;
 			}
-		}
+		}*/
+
+		this.id=data[0];
+		this.pass=data[1];
+		this.numWin=Integer.parseInt(data[2]);
+		this.numDraw=Integer.parseInt(data[3]);
+		this.numLose=Integer.parseInt(data[4]);
+		this.numEarlyLose=Integer.parseInt(data[5]);
+
+
+		System.out.println("id"+id);
+
+
+
 	}
 	// name, numWin, numDraw, numLose, opposite, numEarlyLose
 	// を送るときに使用する方
 	public String sendPlayerData(){
-		return new String(divideKey + name + divideKey + numWin + divideKey + numDraw + divideKey + numLose + divideKey + opposite + divideKey + numEarlyLose);
+		return new String(id + '/' + numWin + '/' + numDraw + '/' + numLose +  '/' + numEarlyLose);
 	}
 
-	// 引数の文字列に対して divideKey作成
+	// 引数の文字列に対して '/'作成
 	public static char makeKey(String str){
 		StringBuffer strBuf = new StringBuffer(str);
 
@@ -93,10 +109,10 @@ public class PlayerData {
 
 	// ファイルに書き出す際の文字列を作る関数
 	public String fileOutStr(){
-		divideKey = makeKey(name + password);
-		return new String(divideKey + name + divideKey + password + divideKey + numWin + divideKey + numDraw + divideKey + numLose + divideKey + numEarlyLose);
+		//'/' = '/';
+		return new String(id + '/' + pass + '/' + numWin + '/' + numDraw + '/' + numLose + '/' + numEarlyLose);
 	}
 	protected String serverOutput(){
-		return new String("ID:" + name);
+		return new String("ID:" + id);
 	}
 }

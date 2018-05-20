@@ -1,5 +1,6 @@
 package server;
 
+
 // Fileなどに必要
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -16,9 +17,9 @@ public class Server {
 	protected static int PORT; // サーバの待ち受けポート
 
 	// プレイヤーデータのあるファイル
-	private final static String FILE_NAME = "player.txt";
+	private final static String FILE_NAME = "./player.txt";
 	// 全体の戦績データのあるファイル
-	private final static String RESULT_FILE_NAME = "result.txt";
+	private final static String RESULT_FILE_NAME = "./result.txt";
 
 
 	private static FileReader fileRead;
@@ -54,12 +55,13 @@ public class Server {
 	        while (true) {
 	        	// 新規接続を受け付ける
 	        	Socket socket = ss.accept();
+	        	System.out.println("接続しました");
 			while(semaphore);
 			setSemaphore(true);
 			receiver.add(new Receiver(socket, numPlayer, this));
-         		receiver.get(numPlayer).start();
+         	receiver.get(numPlayer).start();
 			numPlayer++;
-	          setSemaphore(false);
+	        setSemaphore(false);
 		   }
 		}
 		catch (Exception e) {
@@ -95,6 +97,7 @@ public class Server {
 			resultEarlyLose(opposite, n);
 		}
 		receiver.remove(n);
+		numPlayer--;
 		setSemaphore(false);
 		allPlayerOutput();
 	}
@@ -102,24 +105,41 @@ public class Server {
 
 	// ログインに成功すれば現在のプレイヤーデータに追加
 	// 引数　id, password
-	protected boolean inputText(String id, String pass, PlayerData pla){
+	protected String inputText(String id, String pass, PlayerData pla,int myNumber){
+		System.out.println(textSemaphore);
 		while(textSemaphore);
 		setTextSemaphore(true);
-		StringBuffer strBuf = new StringBuffer(id + pass);
+		//StringBuffer strBuf = new StringBuffer(id + pass);
 		// 2つ目,3つ目の区切り文字の位置用
 		int secondKeyAt;
 		int thirdKeyAt;
 
+		String answer="0";
+
 		try{
 			fileRead = new FileReader(FILE_NAME);
 			bufFileRead = new BufferedReader(fileRead);
-			while(true){
-				if(bufFileRead.ready()){
-					String readedLine = bufFileRead.readLine();
-					StringBuffer lineBuf = new StringBuffer(readedLine);
+			while(bufFileRead.ready()){
+				String readedLine = bufFileRead.readLine();
+
+				String[] str=readedLine.split("/");
+
+				if(str[0].equals(id)&&str[1].equals(pass)) {
+
+					receiver.get(myNumber).player=new PlayerData(readedLine);
+
+
+					//System.out.println(pla.sendPlayerData());
+
+					allPlayerOutput();
+					 answer=str[0]+'/'+str[2]+'/'+str[3]+'/'+str[4]+'/'+str[5];
+					 break;
+
+				}
+
 
 					// まずid + passに区切り文字がないことを確認
-					if(strBuf.indexOf(lineBuf.charAt(0) + "") == -1){
+					/*if(strBuf.indexOf(lineBuf.charAt(0) + "") == -1){
 						// まずは2つ目、3つ目の区切り文字の場所を把握
 						secondKeyAt = readedLine.indexOf(readedLine.charAt(0), 1);
 						thirdKeyAt = readedLine.indexOf(readedLine.charAt(0),secondKeyAt + 1);
@@ -132,39 +152,55 @@ public class Server {
 							allPlayerOutput();
 							break;
 						}
-					}
-				}else{
+					}*/
+				/*}else{
 					setTextSemaphore(false);
-					return false;
-				}
+					return false;*/
+
+
 			}
 			bufFileRead.close();
 			fileRead.close();
 		}
 		catch(FileNotFoundException e){
+			System.out.println("fileError");
 		}
 		// ファイルがない以外の問題の時
 		catch(Exception e){
 			e.printStackTrace();
 		}
 		setTextSemaphore(false);
-		return true;
+		return answer;
 	}
 	// 新規登録の際に使えるidかどうか（ついでに登録も）
-	protected synchronized boolean isNotUsed(String id, String pass, PlayerData pla){
+	protected synchronized boolean isNotUsed(String id, String pass, PlayerData pla,int myNumber){
+
 		while(textSemaphore);
 		setTextSemaphore(true);
 		StringBuffer strBuf = new StringBuffer(id);
 		// 2つ目の区切り文字の位置用
 		int secondKeyAt;
 
+		boolean a=true;
+	//	System.out.println(id);
 		try{
+
 			fileRead = new FileReader(FILE_NAME);
 			bufFileRead = new BufferedReader(fileRead);
-			while(true){
-				if(bufFileRead.ready()){
+			while(bufFileRead.ready()){
+				//if(bufFileRead.ready()){
 					String readedLine = bufFileRead.readLine();
-					StringBuffer lineBuf = new StringBuffer(readedLine);
+
+					String[] str=readedLine.split("/");
+
+					if(str[0].equals(id)) {
+						 a=false;
+						 break;
+					}
+
+
+					/*StringBuffer lineBuf = new StringBuffer(readedLine);
+
 
 					// まずidに区切り文字がないことを確認
 					if(strBuf.indexOf(lineBuf.charAt(0) + "") == -1){
@@ -178,26 +214,35 @@ public class Server {
 							setTextSemaphore(false);
 							return false;
 						}
-					}
-				}else{
+					}*/
+			}
+
 					bufFileRead.close();
 					fileRead.close();
+			//	System.out.println("通貨1");
+				setTextSemaphore(false);
 
-					pla = new PlayerData(id, pass);
-					outputText(pla.fileOutStr(), FILE_NAME);
-					setTextSemaphore(false);
-					return true;
+				if(a) {
+					receiver.get(myNumber).player=new PlayerData(id,pass);
+
+					//pla = new PlayerData(id, pass);
+				//	System.out.println(textSemaphore);
+					outputText(receiver.get(myNumber).player.fileOutStr(), FILE_NAME);
 				}
-			}
+					//return true;
+
+			//while
 		}
 		catch(FileNotFoundException e){
+			System.out.println("no file");
 		}
 		// ファイルがない以外の問題の時
 		catch(Exception e){
 			e.printStackTrace();
 		}
+	//	System.out.println("通貨3");
 		setTextSemaphore(false);
-		return false;
+		return a;
 	}
 
 	// 引数:追加で書き込む文字列, ファイル名
@@ -214,7 +259,7 @@ public class Server {
 		try{
 			fileWrite = new FileWriter(name, true);
 			bufFileWrite = new BufferedWriter(fileWrite);
-			bufFileWrite.write(str);
+			bufFileWrite.write(str+"\n");
 			bufFileWrite.close();
 			fileWrite.close();
 		}
@@ -378,7 +423,7 @@ public class Server {
 	// IDから添え字にする
 	protected int changeFromID(String id){
 		for(int i = 0;;i++){
-			if(receiver.get(i).player.name.equals(id))
+			if(receiver.get(i).player.id.equals(id))
 				return i;
 		}
 	}
@@ -387,11 +432,17 @@ public class Server {
 	protected String allLoginPlayerData(){
 		// できれば入力途中は避けたい
 		int max = receiver.size();
-
-		String retStr = "";
+		//System.out.println(max);
+		String retStr = "3";
 		try{
 			for(int i = 0;i < max;i++){
-				retStr += receiver.get(i).player.sendPlayerData() + "\n";
+
+				retStr += receiver.get(i).player.sendPlayerData();
+
+				if(i<(max-1)) {//最後には改行文字付けないように
+					retStr+="\n";
+				}
+
 			}
 		}
 		catch(Exception e){
@@ -467,17 +518,17 @@ public class Server {
 		receiver.get(loserNum).player.numLose++;
 		renewText(winnerNum, loserNum);
 
-		char divideKey = PlayerData.makeKey(receiver.get(winnerNum).player.name + receiver.get(loserNum).player.name);
-		outputText(divideKey + receiver.get(winnerNum).player.name + divideKey + receiver.get(loserNum).player.name, RESULT_FILE_NAME);
+		char divideKey = PlayerData.makeKey(receiver.get(winnerNum).player.id + receiver.get(loserNum).player.id);
+		outputText(divideKey + receiver.get(winnerNum).player.id + divideKey + receiver.get(loserNum).player.id, RESULT_FILE_NAME);
 	}
 	protected void resultDraw(int num1, int num2){
 		receiver.get(num1).player.numDraw++;
 		receiver.get(num2).player.numDraw++;
 		renewText(num1, num2);
 
-		char divideKey = PlayerData.makeKey(receiver.get(num1).player.name + receiver.get(num2).player.name);
+		char divideKey = PlayerData.makeKey(receiver.get(num1).player.id + receiver.get(num2).player.id);
 		// 引き分けは最後に区切り文字を入れる
-		outputText(divideKey + receiver.get(num1).player.name + divideKey + receiver.get(num2).player + divideKey, RESULT_FILE_NAME);
+		outputText(divideKey + receiver.get(num1).player.id + divideKey + receiver.get(num2).player + divideKey, RESULT_FILE_NAME);
 	}
 
 	protected void resultEarlyLose(int winnerNum, int loserNum){
@@ -499,8 +550,8 @@ public class Server {
 		receiver.get(loserNum).player.numLose++;
 		renewText(winnerNum, loserNum);
 		// 投了は最後区切り文字2つ
-		char divideKey = PlayerData.makeKey(receiver.get(winnerNum).player.name + receiver.get(loserNum).player.name);
-		outputText(divideKey + receiver.get(winnerNum).player.name + divideKey + receiver.get(loserNum).player.name + divideKey + divideKey, RESULT_FILE_NAME);
+		char divideKey = PlayerData.makeKey(receiver.get(winnerNum).player.id + receiver.get(loserNum).player.id);
+		outputText(divideKey + receiver.get(winnerNum).player.id + divideKey + receiver.get(loserNum).player.id + divideKey + divideKey, RESULT_FILE_NAME);
 	}
 	private void allPlayerOutput(){
 		System.out.println("現在ログインしているプレイヤー");
