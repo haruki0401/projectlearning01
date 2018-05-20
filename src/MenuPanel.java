@@ -420,7 +420,25 @@ public class MenuPanel extends JPanel{
 		titleMsg.setFont(new Font("MS Gothic",Font.PLAIN,30));
 		titleMsg.setForeground(Color.WHITE);
 
-		JButton getOffer=new JButton();//offer来た時に表示されるオファー承認画面への遷移ボタン
+		JButton getOffer=new JButton("オファーが来た場合はここに表示されます。");//offer来た時に表示されるオファー承認画面への遷移ボタン
+
+		getOffer.setHorizontalAlignment(JLabel.CENTER);
+		getOffer.setBounds(750,900,700,50);
+		getOffer.setFont(new Font("MS Gothic",Font.PLAIN,30));
+		getOffer.setBackground(Color.WHITE);
+
+		if(offerPlayers.length>0) {
+			getOffer.setText(offerPlayers.length+" 件の対局オファー");
+
+
+			getOffer.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {//login_button_click_event
+					offerScreen(offerPlayers);
+				}
+			});
+		}
+
+
 
 		BufferedImage reloadImage=null;
 
@@ -516,7 +534,7 @@ public class MenuPanel extends JPanel{
 
 	        onlineResult[i].setOpaque(true);
 
-	        onlineID[i].addActionListener(new clickID());//actionlister clickIDへ飛ばす
+	        onlineID[i].addActionListener(new clickPlayID());//actionlister clickIDへ飛ばす
 
 	        //playerArea.setPreferredSize(new  Dimension(750,25*(i+2)));//Task数に合わせてmainPanelのサイズを変更する
 	        playerArea.add(onlineID[i]);
@@ -527,6 +545,7 @@ public class MenuPanel extends JPanel{
 		add(reload,0);
 		add(title,0);
 		add(titleMsg,0);
+		add(getOffer,0);
 		add(onlineColumn1,0);
 		add(onlineColumn2,0);
 		add(scrollpane,0);
@@ -624,8 +643,181 @@ public class MenuPanel extends JPanel{
 		repaint();
 	}
 
-	public void seceltOffer(Player[] onlinePlayers) {//受信したオファー一覧の表示
+	public void offerScreen(Player[] offerPlayers) {//受信したオファー一覧の表示
+		screenIsPlayMain=1;
 
+		removeAll();
+		background();
+		backToMenu();
+
+
+		JLabel title=new JLabel("オファーを受信したプレイヤー");
+
+		title.setHorizontalAlignment(JLabel.CENTER);
+		title.setBounds(0,50,1500,50);
+		title.setFont(new Font("MS Gothic",Font.PLAIN,50));
+		title.setForeground(Color.BLACK);
+
+		JLabel titleMsg=new JLabel("オファーを受理したいplayerIDをクリックしてください。");
+
+		titleMsg.setHorizontalAlignment(JLabel.CENTER);
+		titleMsg.setBounds(0,100,1500,50);
+		titleMsg.setFont(new Font("MS Gothic",Font.PLAIN,30));
+		titleMsg.setForeground(Color.WHITE);
+
+		JPanel playerArea=new JPanel();
+		playerArea.setLayout(null);
+
+		JButton[] onlineID=new JButton[offerPlayers.length];
+		JLabel[] onlineResult=new JLabel[offerPlayers.length];
+
+		JLabel onlineColumn1;
+		JLabel onlineColumn2;
+
+		JScrollPane scrollpane = new JScrollPane(playerArea);
+		scrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollpane.getVerticalScrollBar().setUnitIncrement(25);//スクローススピード
+
+		scrollpane.setBounds(50,250,1500-105,625);
+		scrollpane.setBorder(null);//枠線消す
+
+
+
+		playerArea.setBackground(Color.GRAY);
+		playerArea.setPreferredSize(new  Dimension(750,50*(offerPlayers.length)+1));//Task数に合わせてmainPanelのサイズを変更する
+
+
+		onlineColumn1=new JLabel("対戦相手のID");
+		onlineColumn1.setHorizontalAlignment(JLabel.CENTER);
+		onlineColumn1.setFont(new Font("MS Gothic",Font.PLAIN,40));
+		onlineColumn1.setBounds(50,200,700,50);
+		onlineColumn1.setForeground(Color.BLACK);
+		onlineColumn1.setBackground(Color.BLUE);
+		onlineColumn1.setOpaque(true);
+
+		onlineColumn2=new JLabel("勝敗");
+		onlineColumn2.setHorizontalAlignment(JLabel.CENTER);
+		onlineColumn2.setFont(new Font("MS Gothic",Font.PLAIN,40));
+		onlineColumn2.setBounds(750,200,700-5,50);
+		onlineColumn2.setForeground(Color.BLACK);
+		onlineColumn2.setBackground(Color.RED);
+		onlineColumn2.setOpaque(true);
+
+
+
+		for(int i=0;i<offerPlayers.length;i++){
+	        System.out.println(i);
+
+	        onlineID[i]=new JButton(offerPlayers[i].getID());
+	        onlineID[i].setHorizontalAlignment(JLabel.CENTER);
+	        onlineID[i].setFont(new Font("MS Gothic",Font.PLAIN,40));
+	        onlineID[i].setBounds(0,0+(50*(i)),700,50);
+	        onlineID[i].setForeground(Color.BLACK);
+
+	        if((i%2)==0) {
+	        	onlineID[i].setBackground(new Color(0,204,255));
+	        }else {
+	        	onlineID[i].setBackground(new Color(204,255,255));
+	        }
+
+	        onlineID[i].setOpaque(true);
+
+
+	        onlineResult[i]=new JLabel("勝: "+offerPlayers[i].getWin()+" 負: "+offerPlayers[i].getLose()+" 分: "+offerPlayers[i].getDraw()+" 投了: "+offerPlayers[i].getGiveUp());
+	        onlineResult[i].setHorizontalAlignment(JLabel.CENTER);
+	        onlineResult[i].setFont(new Font("MS Gothic",Font.PLAIN,40));
+	        onlineResult[i].setBounds(700,0+(50*(i)),800-105,50);
+	        onlineResult[i].setForeground(Color.BLACK);
+
+	        if((i%2)==0) {
+	        	onlineResult[i].setBackground(new Color(255,153,204));
+	        }else {
+	        	onlineResult[i].setBackground(Color.PINK);
+	        }
+
+	        onlineResult[i].setOpaque(true);
+
+	        onlineID[i].addActionListener(new clickOfferID());//actionlister clickIDへ飛ばす
+
+	        //playerArea.setPreferredSize(new  Dimension(750,25*(i+2)));//Task数に合わせてmainPanelのサイズを変更する
+	        playerArea.add(onlineID[i]);
+	        playerArea.add(onlineResult[i]);
+
+		}
+
+		add(title,0);
+		add(titleMsg,0);
+		add(onlineColumn1,0);
+		add(onlineColumn2,0);
+		add(scrollpane,0);
+
+		revalidate();
+
+		repaint();
+
+
+
+	}
+
+
+	public void offerSelect(String id) {//オファーを送るかの画面
+		screenIsPlayMain=0;
+
+		removeAll();
+		background();
+
+		JLabel playerID=new JLabel(id);
+		JLabel msg=new JLabel("さんの対戦オファーを受理しますか？");
+
+		JButton yes=new JButton("はい");
+		JButton no=new JButton("いいえ");
+
+		playerID.setHorizontalAlignment(JLabel.CENTER);
+		playerID.setBounds(0,200,1500,100);
+		playerID.setFont(new Font("MS Gothic",Font.PLAIN,75));
+		playerID.setForeground(Color.YELLOW);
+
+		msg.setHorizontalAlignment(JLabel.CENTER);
+		msg.setBounds(0,400,1500,100);
+		msg.setFont(new Font("MS Gothic",Font.PLAIN,50));
+		msg.setForeground(Color.WHITE);
+
+		yes.setHorizontalAlignment(JLabel.CENTER);
+		yes.setBounds(300,700,300,50);
+		yes.setFont(new Font("MS Gothic",Font.PLAIN,50));
+		yes.setForeground(Color.BLACK);
+
+		yes.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {//_click_event
+
+				removeAll();//一応ボタン連続でほかのおさないように
+
+				//オファー受理して対戦
+				System.out.println("オファー受理して対戦");
+			}
+		});
+
+		no.setHorizontalAlignment(JLabel.CENTER);
+		no.setBounds(800,700,300,50);
+		no.setFont(new Font("MS Gothic",Font.PLAIN,50));
+		no.setForeground(Color.BLACK);
+
+		no.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {//_click_event
+				removeAll();//一応ボタン連続でほかのおさないように
+
+
+				//オファー拒否のメッセージ送信
+				System.out.println("オファー拒否のメッセージ送信");
+			}
+		});
+
+		add(playerID,0);
+		add(msg,0);
+		add(yes,0);
+		add(no,0);
+
+		repaint();
 	}
 
 	public int getScreenIsPlayMain() {
@@ -633,9 +825,16 @@ public class MenuPanel extends JPanel{
 	}
 
 
-	class clickID implements ActionListener{//idをクリックしたときのアクションイベント
+	class clickPlayID implements ActionListener{//idをクリックしたときのアクションイベント
 		 public void actionPerformed(ActionEvent e) {
 			 playSelect(e.getActionCommand());
+			 //System.out.println(e.getActionCommand());//test
+		 }
+	}
+
+	class clickOfferID implements ActionListener{//idをクリックしたときのアクションイベント
+		 public void actionPerformed(ActionEvent e) {
+			 offerSelect(e.getActionCommand());
 			 //System.out.println(e.getActionCommand());//test
 		 }
 	}

@@ -104,11 +104,17 @@ class Testserver {
 						out.println(str);
 						out.flush();
 	        			System.out.println("サーバにメッセージを送信しました");
+
+
 					}
 					if(inputLine.equals("7yamada")) {
 						out.println("80");
 						out.flush();
 	        			System.out.println("サーバにメッセージを送信しました");
+
+	        			out.println("70yamada/10/20/30/40/5");
+						out.flush();
+	        			System.out.println("オファー送信");
 					}
 
 				}
