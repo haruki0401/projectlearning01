@@ -1,0 +1,57 @@
+umemoto haruki [10:37]
+相手がsign out(強制終了した場合でも) した場合にサーバにその情報を送信すること
+
+umemoto haruki [09:16]
+player情報をサーバから送信するデータの最初にtypeいれる。
+
+umemoto haruki [09:59]
+戦績検索のときプレイヤー名は部分一致検索じゃなくて完全一致検索
+
+umemoto haruki [10:04]
+戦績表示は直近５０とかに、oppositeをplayer名に
+
+umemoto haruki [10:42]
+login成功の11のあとに本人情報つなげる
+
+umemoto haruki [17:23]
+サーバからの送信データの最初にすべて種類区別の数字をつける。
+
+umemoto haruki [18:48]
+task:
+戦績表示部分のレイアウト
+
+umemoto haruki [19:05]
+現在login のplayer を更新できるボタンの追加
+現在オファーをうけている数をボタンで表示する
+
+umemoto haruki [22:20]
+文字のフォントどうするか
+
+umemoto haruki [01:30]
+SEND_NOW_PLAYER（３） でlogin playerは 30~ all player は 31~とあるが、login playerしかいらないので3だけでよい
+
+umemoto haruki [01:55]
+SEND_NOW_PLAYER（３）で今対戦中（つまり -1以外？）のときはそもそもクライアントに送信しないようにする
+
+umemoto haruki [02:00]
+勝利数など桁数そろえたほうがきれいか？
+
+umemoto haruki [12:19]
+サーバから切断されたときにどうするか
+
+umemoto haruki [14:48]
+オファーを送信した後で、受信側が返事せずに切断した場合はどうするか
+サーバと切断が切れましたを取得
+
+umemoto haruki [16:19]
+特定の人にオファーが来てる情報（複数も）をサーバ側が保存する。そして、一つ選んだ場合ほかのオファーの人にキャンセル送信できるように （編集済み）
+
+umemoto haruki [19:58]
+オファーを送ってた側がキャンセルした場合の旨を伝える必要あり
+
+umemoto haruki [14:13]
+マッチング成立したら、オファーした側にも受けた側にも　81+黒(1)白(2)情報+相手のID （編集済み）
+対戦中に相手が切断する場合は自分の手番じゃなくてもおこりうる
+
+umemoto haruki [14:46]
+receivehandlerちゃんとなってるか

@@ -795,6 +795,7 @@ public class MenuPanel extends JPanel{
 
 				//オファー受理して対戦
 				System.out.println("オファー受理して対戦");
+
 			}
 		});
 
