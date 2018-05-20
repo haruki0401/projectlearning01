@@ -1,3 +1,4 @@
+package client;
 //パッケージのインポート
 import java.awt.Container;
 import java.awt.event.MouseEvent;
