@@ -2,8 +2,8 @@ package server;
 
 public class PlayerData {
 	// データ類
-	protected String id;
-	private String pass;
+	protected String id="";
+	private String pass="";
 	protected int numWin = 0;
 	protected int numDraw = 0;
 	protected int numLose = 0;
@@ -11,6 +11,7 @@ public class PlayerData {
 	// 対戦相手（いない場合は-1）
      // myNumberの値でありreceiver配列の添え字ではない（配列の要素removeでズレてしまうため）
 	protected int opposite = -1;
+
 
 	// すべての文字を使用できるようにするために個別に区切り文字を保存する
 	private char divideKey;
@@ -87,6 +88,11 @@ public class PlayerData {
 	// を送るときに使用する方
 	public String sendPlayerData(){
 		return new String(id + '/' + numWin + '/' + numDraw + '/' + numLose +  '/' + numEarlyLose);
+	}
+
+
+	public String sendID() {
+		return id;
 	}
 
 	// 引数の文字列に対して '/'作成

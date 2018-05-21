@@ -106,7 +106,7 @@ public class Server {
 	// ログインに成功すれば現在のプレイヤーデータに追加
 	// 引数　id, password
 	protected String inputText(String id, String pass, PlayerData pla,int myNumber){
-		System.out.println(textSemaphore);
+		//System.out.println(textSemaphore);
 		while(textSemaphore);
 		setTextSemaphore(true);
 		//StringBuffer strBuf = new StringBuffer(id + pass);
@@ -116,51 +116,70 @@ public class Server {
 
 		String answer="0";
 
+		int alreadyLogin=0;
+
 		try{
-			fileRead = new FileReader(FILE_NAME);
-			bufFileRead = new BufferedReader(fileRead);
-			while(bufFileRead.ready()){
-				String readedLine = bufFileRead.readLine();
 
-				String[] str=readedLine.split("/");
+			for(int i=0;i<receiver.size();i++) {//同じIDで既にログインしていないかチェック
+				if(receiver.get(i).player.sendID().equals(id)) {
+					if(receiver.get(i).getWhereIs()!=0) {
+						alreadyLogin=1;
+						break;
+					}
+				}
+			}
 
-				if(str[0].equals(id)&&str[1].equals(pass)) {
+			if(alreadyLogin==0) {
 
-					receiver.get(myNumber).player=new PlayerData(readedLine);
+				fileRead = new FileReader(FILE_NAME);
+				bufFileRead = new BufferedReader(fileRead);
+				while(bufFileRead.ready()){
+					String readedLine = bufFileRead.readLine();
+
+					String[] str=readedLine.split("/");
 
 
-					//System.out.println(pla.sendPlayerData());
 
-					allPlayerOutput();
-					 answer=str[0]+'/'+str[2]+'/'+str[3]+'/'+str[4]+'/'+str[5];
-					 break;
+
+
+					if(str[0].equals(id)&&str[1].equals(pass)) {
+
+						receiver.get(myNumber).player=new PlayerData(readedLine);
+
+
+						//System.out.println(pla.sendPlayerData());
+
+						allPlayerOutput();
+						 answer=str[0]+'/'+str[2]+'/'+str[3]+'/'+str[4]+'/'+str[5];
+						 break;
+
+					}
+
+
+						// まずid + passに区切り文字がないことを確認
+						/*if(strBuf.indexOf(lineBuf.charAt(0) + "") == -1){
+							// まずは2つ目、3つ目の区切り文字の場所を把握
+							secondKeyAt = readedLine.indexOf(readedLine.charAt(0), 1);
+							thirdKeyAt = readedLine.indexOf(readedLine.charAt(0),secondKeyAt + 1);
+							if(secondKeyAt < 0 || thirdKeyAt < 0)
+								System.out.println("関数inputtext()内のsecondKeyAtもしくはthirdKeyAtの値が不適です");
+
+							// ID,パスワードがあってたなら
+							if(lineBuf.substring(1, secondKeyAt).equals(id) && lineBuf.substring(secondKeyAt + 1, thirdKeyAt).equals(pass)){
+								pla = new PlayerData(readedLine);
+								allPlayerOutput();
+								break;
+							}
+						}*/
+					/*}else{
+						setTextSemaphore(false);
+						return false;*/
+
 
 				}
-
-
-					// まずid + passに区切り文字がないことを確認
-					/*if(strBuf.indexOf(lineBuf.charAt(0) + "") == -1){
-						// まずは2つ目、3つ目の区切り文字の場所を把握
-						secondKeyAt = readedLine.indexOf(readedLine.charAt(0), 1);
-						thirdKeyAt = readedLine.indexOf(readedLine.charAt(0),secondKeyAt + 1);
-						if(secondKeyAt < 0 || thirdKeyAt < 0)
-							System.out.println("関数inputtext()内のsecondKeyAtもしくはthirdKeyAtの値が不適です");
-
-						// ID,パスワードがあってたなら
-						if(lineBuf.substring(1, secondKeyAt).equals(id) && lineBuf.substring(secondKeyAt + 1, thirdKeyAt).equals(pass)){
-							pla = new PlayerData(readedLine);
-							allPlayerOutput();
-							break;
-						}
-					}*/
-				/*}else{
-					setTextSemaphore(false);
-					return false;*/
-
-
+				bufFileRead.close();
+				fileRead.close();
 			}
-			bufFileRead.close();
-			fileRead.close();
 		}
 		catch(FileNotFoundException e){
 			System.out.println("fileError");
@@ -429,21 +448,29 @@ public class Server {
 	}
 
 	// 現在ログインしている全ての人
-	protected String allLoginPlayerData(){
+	protected String allLoginPlayerData(int myNumber){
 		// できれば入力途中は避けたい
 		int max = receiver.size();
 		//System.out.println(max);
 		String retStr = "3";
-		try{
+
+		int playerFound=0;//onlineplayerが見つかったかどうかの変数
+
+		try{//receiver配列バグった時のために一応例外処理
 			for(int i = 0;i < max;i++){
 
-				retStr += receiver.get(i).player.sendPlayerData();
-
-				if(i<(max-1)) {//最後には改行文字付けないように
-					retStr+="\n";
+				if(i==myNumber) {//自分を見つけた
+					//do nothing
+				}else if(receiver.get(i).getWhereIs()==2){
+					retStr += receiver.get(i).player.sendPlayerData()+"\n";
+					playerFound=1;
 				}
-
 			}
+
+			if(playerFound==1) {
+				retStr=retStr.substring(0,retStr.length()-1);
+			}
+
 		}
 		catch(Exception e){
 			e.printStackTrace();

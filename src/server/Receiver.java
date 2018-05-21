@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 // ServerSocketに必要
 import java.net.Socket;
+import java.util.ArrayList;
 
 //データ送受信スレッド
 public class Receiver extends Thread{
@@ -27,6 +28,12 @@ public class Receiver extends Thread{
 	PlayerData player = new PlayerData();
 	protected int myNumber;
 
+	protected int whereIs=0;//playerが今どの段階にいるか
+	//0:接続しただけand新規登録しただけand切断のときにも１を代入 1:ログイン済み 2:オンライン済み 3:オファー送信中 4:対局中
+
+	protected int sendOfferNum=-1;//オファーしている人のmyNumber,-1ならオファーしていない
+
+	protected ArrayList<PlayerData>receiveOfferPlayer=new ArrayList<PlayerData>();//オファーを受けている人のmyNumberの配列 長さ0ならオファー受信してない
 
 	private InputStreamReader sisr; //受信データ用文字ストリーム
 	private BufferedReader br; //文字ストリーム用のバッファ
@@ -51,6 +58,11 @@ public class Receiver extends Thread{
 			while(true) {// データを受信し続ける
 				String inputLine = br.readLine();//データを一行分読み込む
 				if (inputLine != null){ //データを受信したら
+
+					//test
+					System.out.println("from"+myNumber+" : "+inputLine);
+
+
 					// inputLine = inputLine.substring(0, inputLine.length() - 1)
 					type = Integer.parseInt("" +inputLine.charAt(0));
 					switch(type){
@@ -71,25 +83,32 @@ public class Receiver extends Thread{
 							break;
 						}
 						case LOGIN:{
-							String str1 = inputLine.substring(1);
-							while((inputLine = br.readLine()) == null);
 
-							System.out.println(str1+"/"+inputLine);
+							if(inputLine.charAt(1)==('1')) {//log in 要求
+								String str1 = inputLine.substring(2);
+								while((inputLine = br.readLine()) == null);
+
+								System.out.println(str1+"/"+inputLine);
 
 
-							String msg=server.inputText(str1, inputLine, player,myNumber);
+								String msg=server.inputText(str1, inputLine, player,myNumber);
 
 
-							if(msg.equals("0"))
-								printWriter.println("10");
-							else {
+								if(msg.equals("0"))
+									printWriter.println("10");
+								else {
+									whereIs=1;//ログインした状態
+									printWriter.println("11"+msg);
+								}
 
-								printWriter.println("11"+msg);
+								System.out.println(player.sendPlayerData());
+
+								printWriter.flush();
+							}
+							else if(inputLine.charAt(1)==('0')) {//log out 要求
+								whereIs=0;
 							}
 
-							System.out.println(player.sendPlayerData());
-
-							printWriter.flush();
 							break;
 						}
 						case SEND_RESULT:{
@@ -99,13 +118,21 @@ public class Receiver extends Thread{
 							break;
 						}
 						case SEND_NOW_PLAYERS:{
-							//char c = inputLine.charAt(1);
-							//if(c == '0')
-							printWriter.println(server.allLoginPlayerData());
 
-							System.out.println(server.allLoginPlayerData());
+							//String str=inputLine.substring(1);
 
-							printWriter.flush();
+							if(inputLine.charAt(1)=='1') {
+								whereIs=2;//このタイミングで自分もオンラインにする
+								printWriter.println(server.allLoginPlayerData(myNumber));
+								System.out.println(server.allLoginPlayerData(myNumber));
+								printWriter.flush();
+							}
+							else if(inputLine.charAt(1)=='0') {
+								whereIs=1;//ログイン画面に戻ったこと
+							}
+
+
+
 							break;
 						}
 						//case START_JUDGE:
@@ -132,27 +159,104 @@ public class Receiver extends Thread{
 								System.out.println("WIN_JUDGEの2つ目が不適です");
 							break;
 						}
-						case SEND_OFFER:{
-							String oppositeName = inputLine.substring(1);
-							int oppositeNum = server.changeFromID(oppositeName);
-							server.receiver.get(oppositeNum).printWriter.println("7" + player.sendPlayerData());
-							server.receiver.get(oppositeNum).printWriter.flush();
+						case SEND_OFFER:{//71+id:オファー 70+id:オファーキャンセル
+							if(inputLine.charAt(1)=='1'&&sendOfferNum==-1) {
+								String oppositeName = inputLine.substring(2);
+								int oppositeNum = server.changeFromID(oppositeName);
+
+								sendOfferNum=oppositeNum;//オファーしてる人代入
+								whereIs=3;
+
+								server.receiver.get(oppositeNum).addOfferPlayer(player);
+
+								server.receiver.get(oppositeNum).printWriter.println("71" + player.sendPlayerData());
+								server.receiver.get(oppositeNum).printWriter.flush();
+							}
+
+							else if(inputLine.charAt(1)=='0'&&sendOfferNum!=-1) {
+								String oppositeName = inputLine.substring(2);
+								int oppositeNum = server.changeFromID(oppositeName);
+
+								sendOfferNum=-1;//オファーしている人がいなくなったので
+								whereIs=2;
+								server.receiver.get(oppositeNum).removeOfferPlayer(player);
+
+								server.receiver.get(oppositeNum).printWriter.println("70" + player.sendPlayerData());
+								server.receiver.get(oppositeNum).printWriter.flush();
+							}
+
 							break;
 						}
-						case ACCEPT_OFFER:{
-							String oppositeName = inputLine.substring(1);
+						case ACCEPT_OFFER:{//81+id:オファー受理,80+id:オファー拒否
+
+							String oppositeName = inputLine.substring(2);
 							// 添え字
-							int n = server.changeFromMyNum(myNumber);
 							int oppositeNum = server.changeFromID(oppositeName);
+							int myNum = server.changeFromMyNum(myNumber);
+
+							if(inputLine.charAt(1)=='1') {
+
+
+								if(server.receiver.get(oppositeNum).getWhereIs()==3) {
+
+
+									if(myNum<oppositeNum) {
+										server.receiver.get(oppositeNum).printWriter.println("811"+player.sendPlayerData());//相手に受理した旨を送信
+										server.receiver.get(oppositeNum).printWriter.flush();
+									//マッチング成功
+
+									//自分のほうにも送信
+										printWriter.println("812"+server.receiver.get(oppositeNum).player.sendPlayerData());
+										printWriter.flush();
+
+									}
+									else if(myNum>oppositeNum){
+										server.receiver.get(oppositeNum).printWriter.println("812"+player.sendPlayerData());//相手に受理した旨を送信
+										server.receiver.get(oppositeNum).printWriter.flush();
+									//マッチング成功
+
+									//自分のほうにも送信
+										printWriter.println("811"+server.receiver.get(oppositeNum).player.sendPlayerData());
+										printWriter.flush();
+
+									}
+								}
+								else {//相手がオファー送信やめてるからエラーを送信
+									printWriter.println("820"+server.receiver.get(oppositeNum).player.sendPlayerData());
+									printWriter.flush();
+								}
+
+							}
+
+							else if(inputLine.charAt(1)=='0') {
+								if(server.receiver.get(oppositeNum).getWhereIs()==3) {
+									server.receiver.get(oppositeNum).printWriter.println("800"+player.sendPlayerData());//相手に拒否した旨を送信
+									server.receiver.get(oppositeNum).printWriter.flush();
+
+									server.receiver.get(oppositeNum).setWhereIs(2);
+
+								}
+							}
+
+
+
+
+
+
 							// 同時実行制御を入れるために、関数へ
-							if(server.acceptOffer(n, oppositeNum)){
+							/*if(server.acceptOffer(n, oppositeNum)){
 								printWriter.println("81");
 								printWriter.flush();
 								server.startJudge(n, oppositeNum);
 							}
 							else
 								printWriter.println("80");
-							printWriter.flush();
+								printWriter.flush();*/
+
+
+
+
+
 							break;
 						}
 						//case DISCONNECTION:
@@ -167,5 +271,29 @@ public class Receiver extends Thread{
 			//System.err.println("クライアントとの接続が切れました．");
 			server.delete(server.changeFromMyNum(myNumber));
 		}
+	}
+
+	public int getWhereIs() {
+		return whereIs;
+	}
+
+	public void setWhereIs(int i) {
+		whereIs=i;
+	}
+
+	public void addOfferPlayer(PlayerData player) {
+		receiveOfferPlayer.add(player);
+	}
+
+
+	public void removeOfferPlayer(PlayerData player) {
+		for(int i=0;i<receiveOfferPlayer.size();i++) {
+			if(player==receiveOfferPlayer.get(i)) {
+				receiveOfferPlayer.remove(i);
+				System.out.println("オファーキャンセル受付 from "+player.sendPlayerData());
+				break;
+			}
+		}
+
 	}
 }

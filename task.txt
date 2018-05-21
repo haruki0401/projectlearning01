@@ -63,3 +63,11 @@ panelName　不必要か？
 receiver.javaでprintWriter.flush();あるのとないととまちまち
 
 id passに/が入ってないかの確認
+
+対戦時間の追加
+
+同じ人が２つ起動したときのキャンセル
+
+オファー2人以上に送れないように
+
+logout したときにmynumber 変更されない

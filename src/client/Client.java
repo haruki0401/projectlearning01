@@ -26,6 +26,8 @@ public class Client extends JFrame{
 	private Player my;
 	private ArrayList<Player> getOfferPlayer = new ArrayList<Player>();//offer人数
 
+	private String nowOfferPlayer="";
+
 	//panel作成
 	public String[] PanelNames= {"main","menu","Othello"};
 
@@ -142,13 +144,11 @@ public class Client extends JFrame{
 
 			receiveHandler=0;
 
-
 			break;
 		}
 
 		case 1:{
 			receiveHandler=0;
-
 
 			if(msg.equals("10")) {//login失敗
 				mainPanel.authenticationMsg(2);
@@ -265,25 +265,36 @@ public class Client extends JFrame{
 
 			String str=msg.substring(2);
 
-
 			Player player=null;
 
 
-			if(msg.charAt(1)=='0') {//オファー受付
+			if(msg.charAt(1)=='1') {//オファー受付
 				player=new Player(str);
 				getOfferPlayer.add(player);
 				System.out.println("オファー受付 from "+player.getID());
 			}
-			else if(msg.charAt(1)=='1') {//オファーキャンセル受付
+			else if(msg.charAt(1)=='0') {//オファーキャンセル受付
 				player=new Player(str);
 
 				for(int i=0;i<getOfferPlayer.size();i++) {
-					if(!(player.getID().equals(getOfferPlayer.get(i).getID()))) {
+					if(player.getID().equals(getOfferPlayer.get(i).getID())) {
 						getOfferPlayer.remove(i);
 						System.out.println("オファーキャンセル受付 from "+player.getID());
+						break;
 					}
 				}
+
+				/*if(nowOfferPlayer.equals(player.getID())) {//今自分がオファー送信してた人からのキャンセルの場合
+
+					nowOfferPlayer="";
+
+					menuPanel.opponentCancel(player.getID());
+
+				}*/
 			}
+
+
+
 
 			//Player[]  s= getOfferPlayer.toArray(new Player[getOfferPlayer.size()]);
 
@@ -295,15 +306,36 @@ public class Client extends JFrame{
 			break;
 		}
 
-		case 8:{
-			if(msg.equals("80")) {
+		case 8:{//80+playerキャンセル,81+player:マッチング成立 82+player:受理したが相手が切断
+
+
+			String str=msg.substring(3);
+
+			Player player=new Player(str);
+
+			if(msg.substring(0,3).equals("800")) {
 				//オファーキャンセルなどのエラー、onlinePlayerに戻る
-				menuPanel.opponentCancel();
+				menuPanel.opponentCancel(0,player.getID());
 			}
-			else if(msg.equals("81")) {
+			else if(msg.substring(0,3).equals("811")) {//811:黒
 				receiveHandler=0;
 
 				//マッチング成立、オセロパネルに遷移
+
+				othelloPanel=new OthelloPanel(1,this);
+
+				changePanel(1,2);
+			}
+			else if(msg.substring(0,3).equals("812")) {//812:白
+				receiveHandler=0;
+
+				//マッチング成立、オセロパネルに遷移
+
+				othelloPanel=new OthelloPanel(2,this);
+				changePanel(1,2);
+			}
+			else if(msg.substring(0,3).equals("820")) {
+				menuPanel.opponentCancel(1,player.getID());
 			}
 
 			break;
@@ -332,15 +364,19 @@ public class Client extends JFrame{
 			menuPanel.setVisible(true);
 			this.revalidate();
 
-
-			//test
-			/*this.add(othelloPanel,0);
+		}else if(j==2) {
+			this.add(othelloPanel,0);
 			othelloPanel.setVisible(true);
 			othelloPanel.setLayout(null);
-			this.revalidate();*/
+			this.revalidate();
 		}
 
 
+	}
+
+
+	public void setNowOfferPlayer(String id) {
+		nowOfferPlayer=id;
 	}
 
 

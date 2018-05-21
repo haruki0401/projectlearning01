@@ -198,7 +198,7 @@ public class MainPanel extends JPanel{
 					}else if(i==1) {
 						//client.getTempPlayerID(input_id);
 						//client.sendMessage("1"+input_id+"\n"+input_pass);
-						client.sendMessage("1"+input_id+"\n"+input_pass);//test用
+						client.sendMessage("11"+input_id+"\n"+input_pass);//log in は11から
 
 					}
 					//client.sendMsg(input_id);

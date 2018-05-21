@@ -53,6 +53,7 @@ public class MenuPanel extends JPanel{
 			public void actionPerformed(ActionEvent e) {//login2_button_click_event
 				menuScreen();
 				//repaint();
+				client.sendMessage("30");//オンラインからメニュー画面にもどったことを送信
 
 				client.receiveHandler(0);//データ要求キャンセル
 
@@ -62,7 +63,7 @@ public class MenuPanel extends JPanel{
 		add(backToMain,0);
 	}
 
-	public void cancelOffer(int i) {//0:自分がキャンセル, 1:相手にキャンセルされる
+	public void cancelOffer(int i,String id) {//0:自分がキャンセル, 1:相手にキャンセルされる
 		JButton cancelOffer=new JButton("Back");
 
 		cancelOffer.setBounds(50,900,400,50);
@@ -71,7 +72,8 @@ public class MenuPanel extends JPanel{
 			public void actionPerformed(ActionEvent e) {//login2_button_click_event
 
 				if(i==0) {
-					client.sendMessage("7");
+					client.setNowOfferPlayer("");
+					client.sendMessage("70"+id);
 				}
 
 				reloadPlayMain();
@@ -114,7 +116,7 @@ public class MenuPanel extends JPanel{
 		play.setFont(new Font("MS Gothic",Font.PLAIN,50));
 		play.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {//_click_event
-				client.sendMessage("3");//サーバにメッセージ送信
+				client.sendMessage("31");//サーバにメッセージ送信
 
 				client.receiveHandler(1);
 			}
@@ -132,6 +134,7 @@ public class MenuPanel extends JPanel{
 		signout.setFont(new Font("MS Gothic",Font.PLAIN,50));
 		signout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {//_click_event
+				client.sendMessage("");
 				client.changePanel(1,0);
 			}
 		});
@@ -280,7 +283,7 @@ public class MenuPanel extends JPanel{
 
 
 		resultArea.setBackground(Color.GRAY);
-		resultArea.setPreferredSize(new  Dimension(750,50*(s.length)+1));//Task数に合わせてmainPanelのサイズを変更する
+		resultArea.setPreferredSize(new  Dimension(750,50*(s.length)+1));//Task数に合わせてPanelのサイズを変更する
 
 
 
@@ -482,7 +485,7 @@ public class MenuPanel extends JPanel{
 
 
 		playerArea.setBackground(Color.GRAY);
-		playerArea.setPreferredSize(new  Dimension(750,50*(onlinePlayers.length)+1));//Task数に合わせてmainPanelのサイズを変更する
+		playerArea.setPreferredSize(new  Dimension(750,50*(onlinePlayers.length)+1));//Task数に合わせてPanelのサイズを変更する
 
 
 		onlineColumn1=new JLabel("対戦相手のID");
@@ -537,7 +540,7 @@ public class MenuPanel extends JPanel{
 
 	        onlineID[i].addActionListener(new clickPlayID());//actionlister clickIDへ飛ばす
 
-	        //playerArea.setPreferredSize(new  Dimension(750,25*(i+2)));//Task数に合わせてmainPanelのサイズを変更する
+	        //playerArea.setPreferredSize(new  Dimension(750,25*(i+2)));//Task数に合わせてPanelのサイズを変更する
 	        playerArea.add(onlineID[i]);
 	        playerArea.add(onlineResult[i]);
 
@@ -560,7 +563,7 @@ public class MenuPanel extends JPanel{
 	}
 
 	public void reloadPlayMain(){//明示化するためにわざとこのメソッド追加
-		client.sendMessage("3");//サーバにメッセージ送信
+		client.sendMessage("31");//サーバにメッセージ送信
 
 	}
 
@@ -599,9 +602,11 @@ public class MenuPanel extends JPanel{
 
 				repaint();
 
-				client.sendMessage("7"+id);
+				client.sendMessage("71"+id);
 
-				cancelOffer(0);
+				client.setNowOfferPlayer(id);
+
+				cancelOffer(0,id);
 
 				msg.setText(id+" さんからの返事を待っています。");
 
@@ -627,13 +632,21 @@ public class MenuPanel extends JPanel{
 		repaint();
 	}
 
-	public void opponentCancel() {//相手がオファーをキャンセルなど
+	public void opponentCancel(int i,String id) {//i; 0:送ったオファーがキャンセルされた 1:オファー受理したけど相手がキャンセルしてた
 		removeAll();
 		background();
-		cancelOffer(1);
+		cancelOffer(1,"");
 
 
-		JLabel msg=new JLabel("オファーがキャンセルされました。");
+		JLabel msg=new JLabel();
+
+
+		if(i==0) {
+			msg.setText(id+" さんに送信したオファーはキャンセルされました。");
+		}
+		else if(i==1) {
+			msg.setText(id+" さんは送信したオファーをキャンセルしました。");
+		}
 
 		msg.setHorizontalAlignment(JLabel.CENTER);
 		msg.setBounds(0,400,1500,100);
@@ -685,7 +698,7 @@ public class MenuPanel extends JPanel{
 
 
 		playerArea.setBackground(Color.GRAY);
-		playerArea.setPreferredSize(new  Dimension(750,50*(offerPlayers.length)+1));//Task数に合わせてmainPanelのサイズを変更する
+		playerArea.setPreferredSize(new  Dimension(750,50*(offerPlayers.length)+1));//Task数に合わせてPanelのサイズを変更する
 
 
 		onlineColumn1=new JLabel("対戦相手のID");
@@ -740,7 +753,7 @@ public class MenuPanel extends JPanel{
 
 	        onlineID[i].addActionListener(new clickOfferID());//actionlister clickIDへ飛ばす
 
-	        //playerArea.setPreferredSize(new  Dimension(750,25*(i+2)));//Task数に合わせてmainPanelのサイズを変更する
+	        //playerArea.setPreferredSize(new  Dimension(750,25*(i+2)));//Task数に合わせてPanelのサイズを変更する
 	        playerArea.add(onlineID[i]);
 	        playerArea.add(onlineResult[i]);
 
@@ -761,7 +774,7 @@ public class MenuPanel extends JPanel{
 	}
 
 
-	public void offerSelect(String id) {//オファーを送るかの画面
+	public void offerSelect(String id) {//オファーを受理するかの画面
 		screenIsPlayMain=0;
 
 		removeAll();
@@ -793,6 +806,7 @@ public class MenuPanel extends JPanel{
 
 				removeAll();//一応ボタン連続でほかのおさないように
 
+				client.sendMessage("81"+id);
 				//オファー受理して対戦
 				System.out.println("オファー受理して対戦");
 
@@ -808,7 +822,10 @@ public class MenuPanel extends JPanel{
 			public void actionPerformed(ActionEvent e) {//_click_event
 				removeAll();//一応ボタン連続でほかのおさないように
 
+				client.sendMessage("80"+id);
 
+
+				reloadPlayMain();
 				//オファー拒否のメッセージ送信
 				System.out.println("オファー拒否のメッセージ送信");
 			}
