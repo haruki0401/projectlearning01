@@ -23,9 +23,9 @@ public class MainPanel extends JPanel{
 	//JLabel errorMsg=new JLabel("");//入力エラー時のメッセージ
 
 
-	MainPanel(Client cl,String name){
+	MainPanel(Client cl){
 		client=cl;
-		this.setName(name);
+		//this.setName(name);
 
 		//mainScreen();
 	}
@@ -121,6 +121,7 @@ public class MainPanel extends JPanel{
 
 		JLabel loginBg = new JLabel();
 		JLabel loginMsg=new JLabel("プレイヤー情報を入力してください。");
+		JLabel attentionMsg=new JLabel();
 		JLabel idMsg=new JLabel("id");
 		JLabel passMsg=new JLabel("pass");
 		JTextField id=new JTextField(16);
@@ -139,6 +140,12 @@ public class MainPanel extends JPanel{
 		loginMsg.setBounds(500,200,500,50);
 		loginMsg.setFont(new Font("MS Gothic",Font.PLAIN,25));
 		loginMsg.setForeground(Color.WHITE);
+
+
+		attentionMsg.setHorizontalAlignment(JLabel.CENTER);
+		attentionMsg.setBounds(500,250,500,50);
+		attentionMsg.setFont(new Font("MS Gothic",Font.PLAIN,25));
+		attentionMsg.setForeground(Color.RED);
 
 		idMsg.setHorizontalAlignment(JLabel.CENTER);
 		idMsg.setBounds(550,300,400,50);
@@ -162,6 +169,8 @@ public class MainPanel extends JPanel{
 		errorMsg.setForeground(Color.RED);
 
 		if(i==0) {
+			attentionMsg.setText("id,passには/記号はつかえません。");
+
 			login2.setText("新規作成");
 			login2.setFont(new Font("MS Gothic",Font.PLAIN,25));
 		}else {
@@ -183,7 +192,10 @@ public class MainPanel extends JPanel{
 					errorMsg.setText("idを入力してください。");
 				}else if(temppass.equals("")) {
 					errorMsg.setText("passを入力してください。");
-				}else{
+				}else if(id.getText().contains("/")||temppass.contains("/")) {
+					errorMsg.setText("idまたはpassに/記号が含まれています。");
+				}
+				else{
 					errorMsg.setText("");
 					input_id=id.getText();
 					input_pass=temppass;
@@ -219,6 +231,7 @@ public class MainPanel extends JPanel{
 
 		add(loginBg,0);
 		add(loginMsg,0);
+		add(attentionMsg,0);
 		add(idMsg,0);
 		add(id,0);
 		add(passMsg,0);

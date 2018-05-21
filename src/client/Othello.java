@@ -3,9 +3,14 @@ package client;
 import java.util.Random;
 
 public class Othello {
+	static int emp_num;
 	public static final int BLACK =1;
 	public static final int toBLACK =5;;
 	public static final int WHITE =2;
+	static int sendedMessage=0;
+	 static int r1;
+	static int r2;
+	static Client cl;
 	static int bw;//自分が黒か白か
 	 static int x=8;
 	 static int i;
@@ -13,7 +18,7 @@ public class Othello {
 	static int randJudge=0;
 	 static int [][] othello=new int[x][x];
 	 static int endJudge=0;	//終了判定
-	 Othello(int bw) {
+	 Othello(int bw,Client cl) {
 		 //0…おけない、1…黒、2…白、4…おける
 		 for(i=0; i<x; i++) {
 			 for(j=0; j<x; j++) {
@@ -24,8 +29,22 @@ public class Othello {
 		 othello[4][4]=2;
 		 othello[4][3]=1;
 		 othello[3][4]=1;
+		 int n=1;
+		 for(i=1; i<x-1; i++) {
+			 for(j=1; j<x-1; j++) {
+				 othello[i][j]=n;//盤面初期化
+				 if(n==1) {
+					 n=2;
+				 }else {
+					 n=1;
+				 }
+			 }
+		 }
+
+
 
 		 this.bw=bw;//黒か白か
+		 this.cl=cl;
 	 }
 
 	 static void print() { //描画
@@ -443,31 +462,32 @@ public class Othello {
 		 }
 		 if(w_num==0) { //自分が黒ならば
 			 System.out.println("黒の勝利");
-			 sendCode(0);
+			 sendCode(0);//勝ち
 		 }else if(b_num==0) { //自分が白ならば
 			 System.out.println("白の勝利");
 			 sendCode(0);
-		 }else if(endJudge==2){
-			 if(w_num<b_num) {
+		 }
+			 //else if(endJudge==2){
+//			 if(w_num<b_num && bw==1) {
+//				 System.out.println("黒の勝利");
+//				 sendCode(0);
+//			 }else if(w_num>b_num && bw==2) {
+//				 System.out.println("白の勝利");
+//				 sendCode(0);
+//			 }
+//			 else if(w_num==b_num && bw==1){
+//			 System.out.println("引き分け");
+//			 sendCode(3);//引き分け
+//			 }
+		 else if(emp_num==0){
+			 if(w_num<b_num && bw==1) {
 				 System.out.println("黒の勝利");
 				 sendCode(0);
-			 }else if(w_num>b_num) {
+			 }else if(w_num>b_num && bw==2) {
 				 System.out.println("白の勝利");
 				 sendCode(0);
 			 }
-			 else if(w_num==b_num){
-			 System.out.println("引き分け");
-			 sendCode(1);
-			 }
-		 }else if(emp_num==0){
-			 if(w_num<b_num) {
-				 System.out.println("黒の勝利");
-				 sendCode(0);
-			 }else if(w_num>b_num) {
-				 System.out.println("白の勝利");
-				 sendCode(0);
-			 }
-			 else if(w_num==b_num){
+			 else if(w_num==b_num && bw==1){
 			 System.out.println("引き分け");
 			 sendCode(1);
 			 }
@@ -476,19 +496,27 @@ public class Othello {
 
 	 }
 
-	 static String sendCode(int p) {//勝敗コードの送信用
+	 static void sendCode(int p) {//勝敗コードの送信用
 		 if(p==0) {
-			 return "61";
-		 }else {
-			 return "62";
-		 }
+			 cl.sendMessage("6win");
+		 }else if(p==1){
+			 cl.sendMessage("6earlyWin");
+		 }else{
+			 cl.sendMessage("6draw");
+			 }
+		 sendedMessage=1;//sendMessgeされた
 	 }
 
 	 static void random(int BorW) {
-		 int r1,r2;
+
 		 int c=0;
 		 int limit=0;
 		 Random r=new Random();
+		 if(BorW==1) {
+			 choiceB();
+		 }else {
+			 choiceW();
+		 }
 		 if(randJudge>0) {
 		 do {
 		 r1=r.nextInt(8);
@@ -1347,10 +1375,10 @@ public class Othello {
 	 static void giveUp(int borw) {
 		 if(borw==1) {
 			 System.out.println("白の勝利");
-			 sendCode(0);
+			 sendCode(1);
 		 }else {
 			 System.out.println("黒の勝利");
-			 sendCode(0);
+			 sendCode(1);
 		 }
 	 }
 

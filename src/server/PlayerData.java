@@ -118,7 +118,7 @@ public class PlayerData {
 		//'/' = '/';
 		return new String(id + '/' + pass + '/' + numWin + '/' + numDraw + '/' + numLose + '/' + numEarlyLose);
 	}
-	protected String serverOutput(){
+	/*protected String serverOutput(){
 		return new String("ID:" + id);
-	}
+	}*/
 }

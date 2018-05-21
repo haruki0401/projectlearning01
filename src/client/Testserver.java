@@ -84,7 +84,7 @@ class Testserver {
 						for(int i=0;i<20;i++) {
 							str+="\nharuki"+i+"/00";
 						}
-						//out.println("2yamada/10/20/30/40\nharuki/00\numemoto/01");//win=000,lose=001,draw=010,give up(相手が)=011,(自分が)=100
+						//out.println("2yamada/10/20/30/40\nharuki/00\numemoto/01");//win=00,lose=01,draw=10,give up=11,
 						out.println(str);
 						out.flush();
 	        			System.out.println("サーバにメッセージを送信しました");

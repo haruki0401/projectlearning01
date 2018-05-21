@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 
 public class MenuPanel extends JPanel{
 	Client client;
@@ -24,9 +25,9 @@ public class MenuPanel extends JPanel{
 	int screenIsPlayMain=0;//0:false,1:true
 
 
-	MenuPanel(Client cl,Player my,String name){
+	MenuPanel(Client cl,Player my){
 		client=cl;
-		this.setName(name);
+		//this.setName(name);
 		this.my=my;
 
 	}
@@ -63,6 +64,22 @@ public class MenuPanel extends JPanel{
 		add(backToMain,0);
 	}
 
+	public void backToPlayMain() {
+		JButton backToPlayMain=new JButton("Back");
+
+		backToPlayMain.setBounds(50,900,400,50);
+		backToPlayMain.setFont(f);
+		backToPlayMain.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {//login2_button_click_event
+				//repaint();
+
+				reloadPlayMain();
+			}
+		});
+
+		add(backToPlayMain,0);
+	}
+
 	public void cancelOffer(int i,String id) {//0:自分がキャンセル, 1:相手にキャンセルされる
 		JButton cancelOffer=new JButton("Back");
 
@@ -85,6 +102,47 @@ public class MenuPanel extends JPanel{
 
 		add(cancelOffer,0);
 
+	}
+
+
+	public void ruleScreen() {
+		removeAll();
+		background();
+
+
+		JLabel ruleBg = new JLabel();
+
+		ruleBg.setOpaque(true);
+		ruleBg.setBounds(0,125,1500,750);
+		ruleBg.setBackground(Color.BLACK);
+
+		JTextPane rule=new JTextPane();
+
+
+		rule.setText("～ルール説明～\nここで行うゲームは基本的なオセロのルールと何も変わりません。\nただし、以下の点には注意してください。\n・対戦する際、先に接続した方が黒となり先手となります。\n・ここでは1手打つ際に制限時間があります。制限時間を過ぎると、\n打つことが可能な場所にランダムに打たれます。\n・“パス”ボタンを押すと制限時間を過ぎたとき同様、ランダムに打たれます。\n・“投了”は負け扱いとなりますが、投了数としても戦績に残されます。");
+		//rule.setHorizontalAlignment(JLabel.CENTER);
+		rule.setOpaque(false);
+		rule.setBounds(150,250,1300,500);
+		rule.setFont(new Font("MS Gothic",Font.PLAIN,35));
+		rule.setForeground(Color.YELLOW);
+
+
+		JButton close=new JButton("close");
+
+
+		close.setBounds(50,900,400,50);
+		close.setFont(f);
+		close.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {//_click_event
+				menuScreen();
+			}
+		});
+
+		add(ruleBg,0);
+		add(rule,0);
+		add(close,0);
+
+		repaint();
 	}
 
 	public void menuScreen() {//メニュ－画面
@@ -134,7 +192,7 @@ public class MenuPanel extends JPanel{
 		signout.setFont(new Font("MS Gothic",Font.PLAIN,50));
 		signout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {//_click_event
-				client.sendMessage("");
+				client.sendMessage("10");
 				client.changePanel(1,0);
 			}
 		});
@@ -242,7 +300,7 @@ public class MenuPanel extends JPanel{
 		menuBg.setBounds(0,125,1500,750);
 		menuBg.setBackground(Color.BLACK);
 
-		JLabel playerID=new JLabel("ID: "+my.getID()+" さん");
+		JLabel playerID=new JLabel("ID: "+my.getID()+" さん(直近３０戦表示)");
 
 		playerID.setHorizontalAlignment(JLabel.CENTER);
 		playerID.setBounds(0,50,1500,50);
@@ -309,6 +367,8 @@ public class MenuPanel extends JPanel{
 
 
 
+
+        System.out.println("s:"+s.length);
 
 		for(int i=0;i<s.length;i++){
 	        System.out.println(i);
@@ -662,8 +722,8 @@ public class MenuPanel extends JPanel{
 
 		removeAll();
 		background();
-		backToMenu();
-
+		//backToMenu();
+		backToPlayMain();
 
 		JLabel title=new JLabel("オファーを受信したプレイヤー");
 
@@ -823,6 +883,7 @@ public class MenuPanel extends JPanel{
 				removeAll();//一応ボタン連続でほかのおさないように
 
 				client.sendMessage("80"+id);
+				client.removeOfferPlayer(id);
 
 
 				reloadPlayMain();
@@ -841,6 +902,10 @@ public class MenuPanel extends JPanel{
 
 	public int getScreenIsPlayMain() {
 		return screenIsPlayMain;
+	}
+
+	public void setScreenIsPlayMain(int i) {
+		screenIsPlayMain=i;
 	}
 
 

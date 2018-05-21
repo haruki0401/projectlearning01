@@ -29,9 +29,9 @@ public class Client extends JFrame{
 	private String nowOfferPlayer="";
 
 	//panel作成
-	public String[] PanelNames= {"main","menu","Othello"};
+	//public String[] PanelNames= {"main","menu","Othello"};
 
-	MainPanel mainPanel=new MainPanel(this,PanelNames[0]);
+	MainPanel mainPanel=new MainPanel(this);
 	MenuPanel menuPanel;
 
 	OthelloPanel othelloPanel;
@@ -159,7 +159,7 @@ public class Client extends JFrame{
 
 				//repaint();
 
-				menuPanel=new MenuPanel(this,my,PanelNames[1]);
+				menuPanel=new MenuPanel(this,my);
 
 				//test
 
@@ -175,7 +175,7 @@ public class Client extends JFrame{
 
 
 
-				menuPanel.menuScreen();
+				menuPanel.ruleScreen();
 
 
 
@@ -202,6 +202,8 @@ public class Client extends JFrame{
 			try {
 				while(br.ready()) {
 					str=br.readLine();
+
+					System.out.println("str:"+str);
 					results.add(str);
 					System.out.println("!");
 				}
@@ -261,6 +263,56 @@ public class Client extends JFrame{
 			break;
 		}
 
+
+
+		case 4:{
+			if(othelloPanel.oB.bw==1) {
+				othelloPanel.oB.giveUp(2);
+			}else {
+				othelloPanel.oB.giveUp(1);
+			}
+			break;
+		}
+		case 5:{
+			//receiveHandler=0;
+	        if(othelloPanel.turn==1 && othelloPanel.oB.bw==2) {
+	        	othelloPanel.turn=2;
+	        }else {
+	        	//othelloPanel.turn=1;
+	        }
+
+
+	        if(othelloPanel.turn==1) {
+				System.out.println("白が"+msg+"万を受信");
+	        }else {
+				System.out.println("黒が"+msg+"万を受信");
+	        }
+
+	        char[] rivalInfo=msg.toCharArray();
+//	        System.out.println(rivalInfo[0]+"万");//turn
+//	        System.out.println(rivalInfo[1]+"万");//i
+//	        System.out.println(rivalInfo[2]+"万");//j
+	        int[] InfoNum=new int[3];
+	     //   InfoNum[1]=Character.getNumericValue(rivalInfo[1]);
+	        InfoNum[1]=Character.getNumericValue(rivalInfo[1]);
+	        InfoNum[2]=Character.getNumericValue(rivalInfo[2]);
+	   //     System.out.println(InfoNum[1]);//turn
+//	        System.out.println(InfoNum[1]);//i
+//	        System.out.println(InfoNum[2]);//j
+//	        System.out.println(othelloPanel.oB.bw+"万");
+	 //       othelloPanel.turn=InfoNum[1];
+
+	        othelloPanel.rivalI=InfoNum[1];
+	        othelloPanel.rivalJ=InfoNum[2];
+
+
+//	        	if(othelloPanel.turn==othelloPanel.oB.bw) {//相手からの情報が来たとき
+	        			othelloPanel.waiting();
+//	        	}
+
+			break;
+		}
+
 		case 7:{
 
 			String str=msg.substring(2);
@@ -299,14 +351,16 @@ public class Client extends JFrame{
 			//Player[]  s= getOfferPlayer.toArray(new Player[getOfferPlayer.size()]);
 
 			if(menuPanel.getScreenIsPlayMain()==1) {
-				sendMessage("3");//更新ついでにnow playerも更新
+				//System.out.println("reload");
+
+				sendMessage("31");//更新ついでにnow playerも更新
 			}
 
 
 			break;
 		}
 
-		case 8:{//80+playerキャンセル,81+player:マッチング成立 82+player:受理したが相手が切断
+		case 8:{//800+playerキャンセル,811or812+player:マッチング成立 820+player:受理したが相手が切断
 
 
 			String str=msg.substring(3);
@@ -318,20 +372,27 @@ public class Client extends JFrame{
 				menuPanel.opponentCancel(0,player.getID());
 			}
 			else if(msg.substring(0,3).equals("811")) {//811:黒
-				receiveHandler=0;
+				//receiveHandler=0;
 
 				//マッチング成立、オセロパネルに遷移
-
+				//menuPanel.setScreenIsPlayMain(0);
 				othelloPanel=new OthelloPanel(1,this);
+
+				//othelloPanel=new OthelloPanel(1,this,my,player);
+
 
 				changePanel(1,2);
 			}
 			else if(msg.substring(0,3).equals("812")) {//812:白
-				receiveHandler=0;
+				//receiveHandler=0;
 
 				//マッチング成立、オセロパネルに遷移
-
+				//menuPanel.setScreenIsPlayMain(0);
 				othelloPanel=new OthelloPanel(2,this);
+
+				//othelloPanel=new OthelloPanel(2,this,my,player);
+
+
 				changePanel(1,2);
 			}
 			else if(msg.substring(0,3).equals("820")) {
@@ -339,6 +400,20 @@ public class Client extends JFrame{
 			}
 
 			break;
+		}
+
+		case 9:{
+			receiveHandler=0;
+
+			my=new Player(msg.substring(1));
+
+			menuPanel=new MenuPanel(this,my);
+
+			changePanel(2,1);
+
+
+
+			menuPanel.menuScreen();
 		}
 
 		}
@@ -349,6 +424,8 @@ public class Client extends JFrame{
 			this.remove(mainPanel);
 		}else if(i==1) {
 			this.remove(menuPanel);
+		}else if(i==2) {
+			this.remove(othelloPanel);
 		}
 
 
@@ -379,6 +456,17 @@ public class Client extends JFrame{
 		nowOfferPlayer=id;
 	}
 
+	public void removeOfferPlayer(String id) {
+		for(int i=0;i<getOfferPlayer.size();i++) {
+			if(getOfferPlayer.get(i).getID().equals(id)) {
+				getOfferPlayer.remove(i);
+
+				System.out.println("remove");
+				break;
+			}
+		}
+	}
+
 
 
 	public static void main(String[] args) {
@@ -386,6 +474,8 @@ public class Client extends JFrame{
 		client.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		client.setVisible(true);
 		client.setResizable(false);
+
+
 
 		String ipAddress=args[0];
 		int port=Integer.parseInt(args[1]);
