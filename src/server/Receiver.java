@@ -1,6 +1,7 @@
 package server;
 
 
+
 // InputStreamなどに必要
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -66,7 +67,7 @@ public class Receiver extends Thread{
 				if (inputLine != null){ //データを受信したら
 
 					//test
-					System.out.println("from"+myNumber+" : "+inputLine);
+//					System.out.println("from"+myNumber+" : "+inputLine);
 
 
 					// inputLine = inputLine.substring(0, inputLine.length() - 1)
@@ -76,14 +77,14 @@ public class Receiver extends Thread{
 							String str1 = inputLine.substring(1);
 							while((inputLine = br.readLine()) == null);
 
-							System.out.println(str1+"/"+inputLine);
+//							System.out.println(str1+"/"+inputLine);
 
 							if(server.isNotUsed(str1, inputLine, player,myNumber))
 								printWriter.println("01");
 							else
 								printWriter.println("00");
 
-							System.out.println(player.sendPlayerData());
+//							System.out.println(player.sendPlayerData());
 
 							printWriter.flush();
 							break;
@@ -94,7 +95,7 @@ public class Receiver extends Thread{
 								String str1 = inputLine.substring(2);
 								while((inputLine = br.readLine()) == null);
 
-								System.out.println(str1+"/"+inputLine);
+//								System.out.println(str1+"/"+inputLine);
 
 
 								String msg=server.inputText(str1, inputLine, player,myNumber);
@@ -109,7 +110,7 @@ public class Receiver extends Thread{
 									server.allPlayerOutput();//player一覧の更新
 								}
 
-								System.out.println(player.sendPlayerData());
+//								System.out.println(player.sendPlayerData());
 
 								printWriter.flush();
 							}
@@ -140,7 +141,7 @@ public class Receiver extends Thread{
 							}
 
 
-							System.out.println(answer);
+//							System.out.println(answer);
 
 							printWriter.println(answer);
 							printWriter.flush();
@@ -156,7 +157,7 @@ public class Receiver extends Thread{
 								server.allPlayerOutput();//player一覧の更新
 
 								printWriter.println(server.allLoginPlayerData(myNumber));
-								System.out.println(server.allLoginPlayerData(myNumber));
+//								System.out.println(server.allLoginPlayerData(myNumber));
 								printWriter.flush();
 							}
 							else if(inputLine.charAt(1)=='0') {
@@ -175,6 +176,8 @@ public class Receiver extends Thread{
 							decidedOppositeNum=-1;
 							whereIs=1;
 
+							server.allPlayerOutput();//player一覧の更新
+
 							//String msg=server.inputText(str1, inputLine, player,myNumber);
 
 							printWriter.println("9"+player.sendPlayerData());
@@ -190,12 +193,12 @@ public class Receiver extends Thread{
 
 								move=1;
 
-								System.out.println(decidedOppositeNum);
+//								System.out.println(decidedOppositeNum);
 								server.receiver.get(decidedOppositeNum).setMove(0);
 
 								server.receiver.get(decidedOppositeNum).printWriter.println(inputLine);
 
-								System.out.println(inputLine);
+//								System.out.println(inputLine);
 								server.receiver.get(decidedOppositeNum).printWriter.flush();
 
 							}
@@ -302,7 +305,7 @@ public class Receiver extends Thread{
 
 									//ほかのオファーの人に拒否送信
 									for(int i=0;i<receiveOfferPlayer.size();i++) {
-										if(!(receiveOfferPlayer.get(i).sendID().equals("oppositeName"))) {
+										if(!(receiveOfferPlayer.get(i).sendID().equals(oppositeName))) {
 											int cancelNum = server.changeFromID(receiveOfferPlayer.get(i).sendID());
 
 											server.receiver.get(cancelNum).printWriter.println("800"+player.sendPlayerData());//相手に拒否した旨を送信
@@ -313,15 +316,30 @@ public class Receiver extends Thread{
 										}
 									}
 
-									receiveOfferPlayer.clear();//オファーされている配列をクリア
 
 									decidedOppositeNum=oppositeNum;
 									server.receiver.get(decidedOppositeNum).setDecidedOppositeNum(myNumber);
+
+									sendOfferNum=-1;
 									server.receiver.get(decidedOppositeNum).setSendOfferNum(-1);
 
 
+//									System.out.println("opposite: "+decidedOppositeNum);
+									//add
+									receiveOfferPlayer.clear();//オファーされている配列をクリア
+									printWriter.println("72");//client側のoffer配列も変更する
+									printWriter.flush();
+
+									server.receiver.get(decidedOppositeNum).receiveOfferPlayer.clear();//相手のオファーされている配列もクリア
+									server.receiver.get(decidedOppositeNum).printWriter.println("72");//相手のclient側のoffer配列も変更する
+									server.receiver.get(decidedOppositeNum).printWriter.flush();
 
 									whereIs=4;
+									server.receiver.get(decidedOppositeNum).setWhereIs(4);
+
+
+
+
 									server.allPlayerOutput();//player一覧の更新
 
 
@@ -464,7 +482,7 @@ public class Receiver extends Thread{
 		for(int i=0;i<receiveOfferPlayer.size();i++) {
 			if(player==receiveOfferPlayer.get(i)) {
 				receiveOfferPlayer.remove(i);
-				System.out.println("オファーキャンセル受付 from "+player.sendPlayerData());
+//				System.out.println("オファーキャンセル受付 from "+player.sendPlayerData());
 				break;
 			}
 		}

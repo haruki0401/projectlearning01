@@ -1,6 +1,7 @@
 package server;
 
 
+
 // Fileなどに必要
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -50,12 +51,14 @@ public class Server {
 			System.out.println("サーバを起動しました");
 			// ポートを取得
 	        int port = Server.PORT;
+
 			// サーバーソケットを作成
 	        ServerSocket ss = new ServerSocket(port);
 	        while (true) {
 	        	// 新規接続を受け付ける
 	        	Socket socket = ss.accept();
-	        	System.out.println("接続しました");
+
+	        	System.out.println("クライアントが新たに接続されました");
 			while(semaphore);
 			setSemaphore(true);
 			receiver.add(new Receiver(socket, numPlayer, this));

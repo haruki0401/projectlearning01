@@ -1,5 +1,6 @@
 package client;
 
+
 public class Player {
 	String playerID; //プレイヤID
 	String win;

@@ -1,5 +1,6 @@
 package client;
 
+
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,8 +28,9 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
     static int turn;//手番
     static int rivalI; //相手のi
     static int rivalJ; //相手のj
-
-    private static JLabel win;
+    Player my;
+    Player player;
+    //private static JLabel win;
     private static JLabel blackData01;
     private static JLabel blackData02;
     private static JLabel blackData03;
@@ -39,6 +41,7 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
     private static JLabel whiteData03;
     private static JLabel whiteData04;
     private static JLabel whiteData05;
+    private static JLabel Tlimit;
 
     private static ImageIcon blackIcon;
 	private static ImageIcon whiteIcon;
@@ -65,14 +68,14 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
 	 Client client;
     static Othello oB;
 
-    public  OthelloPanel(int a, Client cl) {
+    public  OthelloPanel(int a, Client cl,Player p1,Player p2) {
         cl.setSize(1500,1000);        //ウィンドウのサイズを設定する
        this.client=cl;
        //アイコンの設定
         whiteIcon = new ImageIcon("./White.jpg");
         blackIcon = new ImageIcon("./Black.jpg");
         boardIcon = new ImageIcon("./GreenFrame.jpg");
-        choiceIcon = new ImageIcon("./Choice.jpg");
+        choiceIcon = new ImageIcon("./yg.gif");
         //ボタンの生成
         buttonArray = new JButton[8][8];
         for(int i=0;i<8;i++){
@@ -91,88 +94,102 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
             add(buttonArray[i][j]);//ペインに貼り付ける
         }
         }
+        this.my=p1;
+        this.player=p2;
+
+        int sum1,sum2;
+        int lose1,lose2;
+
+        sum1=Integer.parseInt(this.my.win)+Integer.parseInt(this.my.draw)+Integer.parseInt(this.my.lose)+Integer.parseInt(this.my.giveUp);
+        sum2=Integer.parseInt(this.player.win)+Integer.parseInt(this.player.draw)+Integer.parseInt(this.player.lose)+Integer.parseInt(this.player.giveUp);
+        lose1=Integer.parseInt(this.my.lose)+Integer.parseInt(this.my.giveUp);
+        lose2=Integer.parseInt(this.player.lose)+Integer.parseInt(this.player.giveUp);
 
         blackData01=new JLabel("黒");
-        blackData01.setFont(new Font("Arial",Font.PLAIN,16));
-        blackData01.setBounds(50,50,100,50);
+        blackData01.setFont(new Font("MS Gothic",Font.PLAIN,36));
+        blackData01.setBounds(350,50,100,50);
         add(blackData01);
 
         blackData02=new JLabel("プレイヤ名");
-        blackData02.setFont(new Font("Arial",Font.PLAIN,8));
-        blackData02.setBounds(50,75,100,50);
+        blackData02.setFont(new Font("MS Gothic",Font.PLAIN,14));
+        blackData02.setBounds(350,100,100,50);
         add(blackData02);
 
-        blackData03=new JLabel("宇佐美");
-        blackData03.setFont(new Font("Arial",Font.PLAIN,8));
-        blackData03.setBounds(50,100,100,50);
+        blackData03=new JLabel(this.my.playerID);
+        blackData03.setFont(new Font("MS Gothic",Font.PLAIN,20));
+        blackData03.setBounds(350,120,100,50);
         add(blackData03);
 
         blackData04=new JLabel("戦績");
-        blackData04.setFont(new Font("Arial",Font.PLAIN,8));
-        blackData04.setBounds(50,175,100,50);
+        blackData04.setFont(new Font("MS Gothic",Font.PLAIN,14));
+        blackData04.setBounds(350,180,100,50);
         add(blackData04);
 
-        blackData05=new JLabel("100戦 100勝 0敗 0分");
-        blackData05.setFont(new Font("Arial",Font.PLAIN,8));
-        blackData05.setBounds(50,200,100,50);
+        blackData05=new JLabel(sum1+"戦 "+this.my.win+"勝 "+lose1+"敗 "+this.my.draw+"分");
+        blackData05.setFont(new Font("MS Gothic",Font.PLAIN,20));
+        blackData05.setBounds(350,200,300,50);
         add(blackData05);
 
 
 
         whiteData01=new JLabel("白");
-        whiteData01.setFont(new Font("Arial",Font.PLAIN,16));
-        whiteData01.setBounds(1450,50,100,50);
+        whiteData01.setFont(new Font("MS Gothic",Font.PLAIN,36));
+        whiteData01.setBounds(1000,50,100,50);
         add(whiteData01);
 
         whiteData02=new JLabel("プレイヤ名");
-        whiteData02.setFont(new Font("Arial",Font.PLAIN,8));
-        whiteData02.setBounds(1450,75,100,50);
+        whiteData02.setFont(new Font("MS Gothic",Font.PLAIN,14));
+        whiteData02.setBounds(1000,100,100,50);
         add(whiteData02);
 
-        whiteData03=new JLabel("俊介");
-        whiteData03.setFont(new Font("Arial",Font.PLAIN,8));
-        whiteData03.setBounds(1450,100,100,50);
+        whiteData03=new JLabel(this.player.playerID);
+        whiteData03.setFont(new Font("MS Gothic",Font.PLAIN,20));
+        whiteData03.setBounds(1000,120,100,50);
         add(whiteData03);
 
         whiteData04=new JLabel("戦績");
-        whiteData04.setFont(new Font("Arial",Font.PLAIN,8));
-        whiteData04.setBounds(1450,175,100,50);
+        whiteData04.setFont(new Font("MS Gothic",Font.PLAIN,14));
+        whiteData04.setBounds(1000,180,100,50);
         add(whiteData04);
 
-        whiteData05=new JLabel("100戦 100勝 0敗 0分");
-        whiteData05.setFont(new Font("Arial",Font.PLAIN,8));
-        whiteData05.setBounds(1450,200,100,50);
+        whiteData05=new JLabel(sum2+"戦 "+this.player.win+"勝 "+lose2+"敗 "+this.player.draw+"分");
+        whiteData05.setFont(new Font("MS Gothic",Font.PLAIN,20));
+        whiteData05.setBounds(1000,200,300,50);
         add(whiteData05);
 
 
 
 
         giveUp=new JButton("投了");
-        giveUp.setBounds(500,550,100,50);//ボタンの大きさと位置を設定する．(x座標，y座標,xの幅,yの幅）
+        giveUp.setBounds(350,500,300,50);//ボタンの大きさと位置を設定する．(x座標，y座標,xの幅,yの幅）
         giveUp.addMouseListener(this);//ボタンをマウスでさわったときに反応するようにする
         giveUp.addMouseMotionListener(this);//ボタンをマウスで動かそうとしたときに反応するようにする
         giveUp.setActionCommand("0");//ボタンに配列の情報を付加する（ネットワークを介してオブジェクトを識別するため）
         add(giveUp);
 
         pass=new JButton("パス");
-        pass.setBounds(900,550,100,50);//ボタンの大きさと位置を設定する．(x座標，y座標,xの幅,yの幅）
+        pass.setBounds(850,500,300,50);//ボタンの大きさと位置を設定する．(x座標，y座標,xの幅,yの幅）
         pass.addMouseListener(this);//ボタンをマウスでさわったときに反応するようにする
         pass.addMouseMotionListener(this);//ボタンをマウスで動かそうとしたときに反応するようにする
         pass.setActionCommand("1");//ボタンに配列の情報を付加する（ネットワークを介してオブジェクトを識別するため）
         add(pass);
 
 
-        jstart=new JButton("はじめ");
-        jstart.setBounds(50,200,100,50);//ボタンの大きさと位置を設定する．(x座標，y座標,xの幅,yの幅）
-        jstart.addMouseListener(this);//ボタンをマウスでさわったときに反応するようにする
-        jstart.addMouseMotionListener(this);//ボタンをマウスで動かそうとしたときに反応するようにする
-        jstart.setActionCommand("3");
-        add(jstart);
+//        jstart=new JButton("はじめ");
+//        jstart.setBounds(50,200,100,50);//ボタンの大きさと位置を設定する．(x座標，y座標,xの幅,yの幅）
+//        jstart.addMouseListener(this);//ボタンをマウスでさわったときに反応するようにする
+//        jstart.addMouseMotionListener(this);//ボタンをマウスで動かそうとしたときに反応するようにする
+//        jstart.setActionCommand("3");
+//        add(jstart);
 
         jend=new JButton("終了");
         jend.setBounds(50,600,100,50);//ボタンの大きさと位置を設定する．(x座標，y座標,xの幅,yの幅）
-        jend.addMouseListener(this);//ボタンをマウスでさわったときに反応するようにする
-        jend.addMouseMotionListener(this);//ボタンをマウスで動かそうとしたときに反応するようにする
+        jend.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {//_click_event
+                client.sendMessage("4");
+                client.changePanel(2,1);
+            }
+        });
         jend.setEnabled(false);//対局終了時にtrueに変更
         jend.setActionCommand("4");
         add(jend);
@@ -180,9 +197,18 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
 
 
         jtext=new JTextField(TIME_LIMIT);
-        jtext.setBounds(50,450,100,50);//ボタンの大きさと位置を設定する．(x座標，y座標,xの幅,yの幅）
+        jtext.setBounds(700,500,100,50);//ボタンの大きさと位置を設定する．(x座標，y座標,xの幅,yの幅）
+		jtext.setFont(new Font("SanSerif",Font.ITALIC,30));
+		jtext.setHorizontalAlignment(jtext.CENTER);
+        //jtext.setFont(new Font("MS Gothic",Font.PLAIN,24));
         add(jtext);
 
+
+        Tlimit=new JLabel("制限時間");
+        Tlimit.setFont(new Font("MS Gothic",Font.PLAIN,14));
+        Tlimit.setBounds(700,450,100,50);
+		Tlimit.setHorizontalAlignment(Tlimit.CENTER);
+        add(Tlimit);
 //    }
 //
 //    public static void main(String[] args) {
@@ -193,8 +219,11 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
         whichTurn=new JButton("あなたの手番です");
         }else {
             whichTurn=new JButton("相手の手番です");
+            giveUp.setEnabled(false);
+            pass.setEnabled(false);
         }
-        whichTurn.setBounds(600,650,200,50);//ボタンの大きさと位置を設定する．(x座標，y座標,xの幅,yの幅）
+        whichTurn.setBounds(650,600,200,50);//ボタンの大きさと位置を設定する．(x座標，y座標,xの幅,yの幅）
+        whichTurn.setEnabled(false);
         add(whichTurn);
 
 
@@ -214,6 +243,9 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
     	//if(oB.bw==turn) {
     		if(oB.bw==1) {
     			oB.choiceB();
+    			if(oB.randJudge>0) {
+        	        pass.setEnabled(false);
+    			}
     		}
     //	}
 		apply();
@@ -258,6 +290,8 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
 
 
         			whichTurn.setText("相手の手番です");
+        		    giveUp.setEnabled(false);
+        	        pass.setEnabled(false);
 
         			repaint();//画面のオブジェクトを描画し直す
 
@@ -291,6 +325,8 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
             	//oB.sendInf(turn,theArrayIndexOfI,theArrayIndexOfJ);
 
     			whichTurn.setText("相手の手番です");
+    		    giveUp.setEnabled(false);
+    	        pass.setEnabled(false);
 
             	repaint();//画面のオブジェクトを描画し直す
         		System.out.println("n");
@@ -311,29 +347,33 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
             		oB.endJudge=2;
             			client.sendMessage("599");
             			client.receiveHandler(1);
-            			win=new JLabel("白の勝利");
-            			add(win);
-            			win.setBounds(0,0,100,50);//ボタンの大きさと位置を設定する．(x座標，y座標,xの幅,yの幅）
+            		//	win=new JLabel("白の勝利");
+            		//	add(win);
+            		///	win.setBounds(0,0,100,50);//ボタンの大きさと位置を設定する．(x座標，y座標,xの幅,yの幅）
             			repaint();
                    		System.out.println("n");
             			jtext.setText(TIME_LIMIT);
                 		if(th!=null) {
                 				th=null;
                 		}
+                        giveUp.setEnabled(false);
+                        pass.setEnabled(false);
             	}else {
         			//oB.giveUp(2);
             		oB.endJudge=2;
         			client.sendMessage("599");
         			client.receiveHandler(1);
-           			win=new JLabel("黒の勝利");
-        			add(win);
-        			win.setBounds(0,0,100,50);//ボタンの大きさと位置を設定する．(x座標，y座標,xの幅,yの幅）
+           		//	win=new JLabel("黒の勝利");
+        		////	add(win);
+        	//		win.setBounds(0,0,100,50);//ボタンの大きさと位置を設定する．(x座標，y座標,xの幅,yの幅）
         			repaint();
                		System.out.println("n");
         			jtext.setText(TIME_LIMIT);
             		if(th!=null) {
             				th=null;
             		}
+                    giveUp.setEnabled(false);
+                    pass.setEnabled(false);
             	}
             }else if(giveOrPass==1) {
             	//passのそうさ
@@ -350,6 +390,8 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
                     apply();
 
         			whichTurn.setText("相手の手番です");
+        		    giveUp.setEnabled(false);
+        	        pass.setEnabled(false);
 
                     repaint();//画面のオブジェクトを描画し直す
                     //oB.bw=2;
@@ -433,8 +475,19 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
     public void waiting() {
     	System.out.println("waitingに到達");
 		whichTurn.setText("あなたの手番です");
+        giveUp.setEnabled(true);
+        pass.setEnabled(true);
     	System.out.println(turn);
     	System.out.println(oB.bw);
+ 		oB.judge();
+        if(oB.emp_status==0) {
+
+			jtext.setText(TIME_LIMIT);
+    		if(th!=null) {
+    				th=null;
+    		}
+            jend.setEnabled(true);//対局終了時にtrueに変更
+        }
     	if(turn==oB.bw) {//相手からの情報が来たとき
     	        if(oB.bw==1) {
     		        if(rivalI<8 && rivalJ<8 ) {
@@ -452,6 +505,9 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
     		        	oB.giveUp(2);//白のギブアップ);
     		        }
     	        		oB.choiceB();
+    	        		if(oB.randJudge>0) {
+    	        	        pass.setEnabled(false);
+    	        		}
     	        		apply();
     	        		repaint();
     	            }else if(oB.bw==2){
@@ -486,21 +542,17 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
 //    		        }
 
     	            	oB.choiceW();
+    	        		if(oB.randJudge>0) {
+    	        	        pass.setEnabled(false);
+    	        		}
     	            	apply();
     	            	repaint();
     	        }
     	        System.out.println("endJudge="+oB.endJudge);
 
-    	        oB.judge();
+    	       //
          		System.out.println("emptyy="+oB.emp_num);
-    	        if(oB.emp_num==0) {
 
-        			jtext.setText(TIME_LIMIT);
-            		if(th!=null) {
-            				th=null;
-            		}
-                    jend.setEnabled(true);//対局終了時にtrueに変更
-    	        }
 
     	        if(oB.endJudge!=2) {
     			System.out.println("a");//タイマースタート
@@ -509,16 +561,18 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
     				th.start();
     			}
     	        }
-    	        if(oB.endJudge==2){
-               		System.out.println("n");
-                    jend.setEnabled(true);//対局終了時にtrueに変更
-        			jtext.setText(TIME_LIMIT);
-            		if(th!=null) {
-            				th=null;
-            		}
-                    jend.setEnabled(true);//対局終了時にtrueに変更
+    	    //    if((oB.endJudge==2 && rivalI==8) ||(oB.endJudge==2 && rivalI==9) ){
 
-    	        }
+//        	        if(oB.endJudge==2  ){
+//               		System.out.println("n");
+//                    jend.setEnabled(true);//対局終了時にtrueに変更
+//        			jtext.setText(TIME_LIMIT);
+//            		if(th!=null) {
+//            				th=null;
+//            		}
+//                    jend.setEnabled(true);//対局終了時にtrueに変更
+//
+//    	        }
 
     	}
 
@@ -667,6 +721,8 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
     			oB.judge();//勝敗判定
             	//oB.sendInf(turn,theArrayIndexOfI,theArrayIndexOfJ);
     			whichTurn.setText("相手の手番です");
+    		    giveUp.setEnabled(false);
+    	        pass.setEnabled(false);
     			repaint();//画面のオブジェクトを描画し直す
 
 			}

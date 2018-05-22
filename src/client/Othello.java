@@ -8,6 +8,7 @@ public class Othello {
 	public static final int toBLACK =5;;
 	public static final int WHITE =2;
 	static int sendedMessage=0;
+	static int emp_status;
 	 static int r1;
 	static int r2;
 	static Client cl;
@@ -493,6 +494,7 @@ public class Othello {
 			 }
 		 }
 		 System.out.println(emp_num);
+		 emp_status=emp_num;
 
 	 }
 

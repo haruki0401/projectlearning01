@@ -1,4 +1,5 @@
 package client;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -271,6 +272,8 @@ public class Client extends JFrame{
 			}else {
 				othelloPanel.oB.giveUp(1);
 			}
+            othelloPanel.jend.setEnabled(true);//対局終了時にtrueに変更
+
 			break;
 		}
 		case 5:{
@@ -313,7 +316,7 @@ public class Client extends JFrame{
 			break;
 		}
 
-		case 7:{
+		case 7:{//71+player: オファー受付,70+player: オファーキャンセル受付,72: オファー配列クリア
 
 			String str=msg.substring(2);
 
@@ -343,6 +346,10 @@ public class Client extends JFrame{
 					menuPanel.opponentCancel(player.getID());
 
 				}*/
+			}
+
+			else if(msg.charAt(1)=='2') {
+				getOfferPlayer.clear();
 			}
 
 
@@ -376,9 +383,9 @@ public class Client extends JFrame{
 
 				//マッチング成立、オセロパネルに遷移
 				//menuPanel.setScreenIsPlayMain(0);
-				othelloPanel=new OthelloPanel(1,this);
+//				othelloPanel=new OthelloPanel(1,this);
 
-				//othelloPanel=new OthelloPanel(1,this,my,player);
+				othelloPanel=new OthelloPanel(1,this,my,player);
 
 
 				changePanel(1,2);
@@ -388,9 +395,9 @@ public class Client extends JFrame{
 
 				//マッチング成立、オセロパネルに遷移
 				//menuPanel.setScreenIsPlayMain(0);
-				othelloPanel=new OthelloPanel(2,this);
+//				othelloPanel=new OthelloPanel(2,this);
 
-				//othelloPanel=new OthelloPanel(2,this,my,player);
+				othelloPanel=new OthelloPanel(2,this,my,player);
 
 
 				changePanel(1,2);

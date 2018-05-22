@@ -1,5 +1,6 @@
 package server;
 
+
 public class PlayerData {
 	// データ類
 	protected String id="";
