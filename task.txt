@@ -82,3 +82,9 @@ receiver320行付近に追加
 
 									server.receiver.get(decidedOppositeNum).receiveOfferPlayer.clear();//相手のオファーされている配列もクリア
 									server.receiver.get(decidedOppositeNum).setWhereIs(4);
+
+
+お互いにオファー送りあってるときにはマッチング
+
+
+private publicなどの確認

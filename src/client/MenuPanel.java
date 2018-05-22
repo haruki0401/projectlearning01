@@ -300,7 +300,7 @@ public class MenuPanel extends JPanel{
 		menuBg.setBounds(0,125,1500,750);
 		menuBg.setBackground(Color.BLACK);
 
-		JLabel playerID=new JLabel("ID: "+my.getID()+" さん(直近３０戦表示)");
+		JLabel playerID=new JLabel("ID: "+player.getID()+" さん(直近３０戦表示)");
 
 		playerID.setHorizontalAlignment(JLabel.CENTER);
 		playerID.setBounds(0,50,1500,50);

@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class OthelloPanel extends JPanel implements MouseListener,MouseMotionListener,ActionListener,Runnable {
-	public static final String TIME_LIMIT ="1";
+	public static final String TIME_LIMIT ="5";
     private static JButton buttonArray[][];//ボタン用の配列
     private static JButton theButton;
     private static JButton giveUp;
@@ -347,6 +347,8 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
             		oB.endJudge=2;
             			client.sendMessage("599");
             			client.receiveHandler(1);
+	        			whichTurn.setText("投了しました。");
+
             		//	win=new JLabel("白の勝利");
             		//	add(win);
             		///	win.setBounds(0,0,100,50);//ボタンの大きさと位置を設定する．(x座標，y座標,xの幅,yの幅）
@@ -363,6 +365,9 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
             		oB.endJudge=2;
         			client.sendMessage("599");
         			client.receiveHandler(1);
+
+        			whichTurn.setText("投了しました。");
+
            		//	win=new JLabel("黒の勝利");
         		////	add(win);
         	//		win.setBounds(0,0,100,50);//ボタンの大きさと位置を設定する．(x座標，y座標,xの幅,yの幅）
@@ -496,8 +501,11 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
     		        }else if(rivalI==9 && rivalJ==9 ) {
 	    	            jend.setEnabled(true);//対局終了時にtrueに変更
 	               		System.out.println("n");
-	                    jend.setEnabled(true);//対局終了時にtrueに変更
+	                    giveUp.setEnabled(false);//対局終了時にtrueに変更
 	        			jtext.setText(TIME_LIMIT);
+
+	        			whichTurn.setText("相手が投了しました。");
+
 	            		if(th!=null) {
 	            				th=null;
 	            		}
@@ -519,6 +527,10 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
     	               		System.out.println("n");
     	                    jend.setEnabled(true);//対局終了時にtrueに変更
     	        			jtext.setText(TIME_LIMIT);
+
+    	        			whichTurn.setText("相手が投了しました。");
+
+
     	            		if(th!=null) {
     	            				th=null;
     	            		}

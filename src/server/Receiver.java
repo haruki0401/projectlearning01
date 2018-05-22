@@ -219,14 +219,14 @@ public class Receiver extends Thread{
 							if(whereIs==4) {//何回も送らないように
 
 								if(inputLine.equals("6win")) {
-									whereIs=2;
+									//whereIs=2;
 
 									player.numWin++;
 									server.receiver.get(decidedOppositeNum).player.numLose++;
 									server.resultWin(myNumber, decidedOppositeNum);
 								}
 								else if(inputLine.equals("6earlyWin")) {
-									whereIs=2;
+									//whereIs=2;
 
 
 									player.numWin++;
@@ -234,7 +234,7 @@ public class Receiver extends Thread{
 									server.resultEarlyLose(myNumber, decidedOppositeNum);
 								}
 								else if(inputLine.equals("6draw")) {
-									whereIs=2;
+									//whereIs=2;
 
 									player.numDraw++;
 									server.receiver.get(decidedOppositeNum).player.numDraw++;
@@ -262,7 +262,97 @@ public class Receiver extends Thread{
 								String oppositeName = inputLine.substring(2);
 								int oppositeNum = server.changeFromID(oppositeName);
 
-								if((server.receiver.get(oppositeNum).getWhereIs()==2)||(server.receiver.get(oppositeNum).getWhereIs()==3)) {
+
+								if(server.receiver.get(oppositeNum).getSendOfferNum()==myNumber) {//両方がオファー送りあってマッチング成立
+
+
+
+
+
+									if(server.receiver.get(oppositeNum).getWhereIs()==3) {
+
+										//自分がほかのオファーの人に拒否送信
+
+										cancelOffer(oppositeName);
+
+
+										//相手がほかのオファーの人に拒否送信
+
+										server.receiver.get(oppositeNum).cancelOffer(player.sendID());
+
+										decidedOppositeNum=oppositeNum;
+										server.receiver.get(decidedOppositeNum).setDecidedOppositeNum(myNumber);
+
+										sendOfferNum=-1;
+										server.receiver.get(decidedOppositeNum).setSendOfferNum(-1);
+
+
+//										System.out.println("opposite: "+decidedOppositeNum);
+										//add
+										receiveOfferPlayer.clear();//オファーされている配列をクリア
+										printWriter.println("72");//client側のoffer配列も変更する
+										printWriter.flush();
+
+										server.receiver.get(decidedOppositeNum).receiveOfferPlayer.clear();//相手のオファーされている配列もクリア
+										server.receiver.get(decidedOppositeNum).printWriter.println("72");//相手のclient側のoffer配列も変更する
+										server.receiver.get(decidedOppositeNum).printWriter.flush();
+
+										whereIs=4;
+										server.receiver.get(decidedOppositeNum).setWhereIs(4);
+
+										server.allPlayerOutput();//player一覧の更新
+
+
+										if(myNumber<decidedOppositeNum) {
+
+
+										//マッチング成功
+
+											//自分に送信(黒)
+											setMove(0);
+
+											printWriter.println("811"+server.receiver.get(decidedOppositeNum).player.sendPlayerData());
+											printWriter.flush();
+
+											//相手に送信(白)
+											server.receiver.get(decidedOppositeNum).setMove(1);
+
+											server.receiver.get(decidedOppositeNum).printWriter.println("812"+player.sendPlayerData());//相手に受理した旨を送信
+											server.receiver.get(decidedOppositeNum).printWriter.flush();
+
+										}
+										else if(myNumber>decidedOppositeNum){
+										//マッチング成功
+
+											//自分に送信(白)
+											setMove(1);
+
+
+											printWriter.println("812"+server.receiver.get(decidedOppositeNum).player.sendPlayerData());
+											printWriter.flush();
+
+											//相手に送信(黒)
+											server.receiver.get(decidedOppositeNum).setMove(0);
+
+											server.receiver.get(decidedOppositeNum).printWriter.println("811"+player.sendPlayerData());//相手に受理した旨を送信
+											server.receiver.get(decidedOppositeNum).printWriter.flush();
+
+										}
+									}
+									else {//相手がオファー送信やめてるからエラーを送信
+										printWriter.println("820"+server.receiver.get(oppositeNum).player.sendPlayerData());
+										printWriter.flush();
+									}
+
+
+
+
+
+
+
+
+								}
+								else if((server.receiver.get(oppositeNum).getWhereIs()==2)||(server.receiver.get(oppositeNum).getWhereIs()==3)) {
 									sendOfferNum=oppositeNum;//オファーしてる人代入
 									whereIs=3;
 
@@ -303,8 +393,11 @@ public class Receiver extends Thread{
 
 								if(server.receiver.get(oppositeNum).getWhereIs()==3) {
 
-									//ほかのオファーの人に拒否送信
-									for(int i=0;i<receiveOfferPlayer.size();i++) {
+									//自分がほかのオファーの人に拒否送信
+
+									cancelOffer(oppositeName);
+
+									/*for(int i=0;i<receiveOfferPlayer.size();i++) {
 										if(!(receiveOfferPlayer.get(i).sendID().equals(oppositeName))) {
 											int cancelNum = server.changeFromID(receiveOfferPlayer.get(i).sendID());
 
@@ -314,8 +407,24 @@ public class Receiver extends Thread{
 											server.receiver.get(cancelNum).setWhereIs(2);
 											server.receiver.get(cancelNum).setSendOfferNum(-1);
 										}
-									}
+									}*/
 
+
+									//相手がほかのオファーの人に拒否送信
+
+									server.receiver.get(oppositeNum).cancelOffer(player.sendID());
+
+									/*for(int i=0;i<server.receiver.get(oppositeNum).receiveOfferPlayer.size();i++) {
+										if(!(server.receiver.get(oppositeNum).receiveOfferPlayer.get(i).sendID().equals(player.sendID()))) {
+											int cancelNum = server.changeFromID(receiveOfferPlayer.get(i).sendID());
+
+											server.receiver.get(cancelNum).printWriter.println("800"+player.sendPlayerData());//相手に拒否した旨を送信
+											server.receiver.get(cancelNum).printWriter.flush();
+
+											server.receiver.get(cancelNum).setWhereIs(2);
+											server.receiver.get(cancelNum).setSendOfferNum(-1);
+										}
+									}*/
 
 									decidedOppositeNum=oppositeNum;
 									server.receiver.get(decidedOppositeNum).setDecidedOppositeNum(myNumber);
@@ -456,12 +565,30 @@ public class Receiver extends Thread{
 		}
 	}
 
+	private void cancelOffer(String str) {//str以外にoffercancelされたことを送信
+		for(int i=0;i<receiveOfferPlayer.size();i++) {
+			if(!(receiveOfferPlayer.get(i).sendID().equals(str))) {
+				int cancelNum = server.changeFromID(receiveOfferPlayer.get(i).sendID());
+
+				server.receiver.get(cancelNum).printWriter.println("800"+player.sendPlayerData());//相手に拒否した旨を送信
+				server.receiver.get(cancelNum).printWriter.flush();
+
+				server.receiver.get(cancelNum).setWhereIs(2);
+				server.receiver.get(cancelNum).setSendOfferNum(-1);
+			}
+		}
+	}
 	private void setDecidedOppositeNum(int num) {
 		decidedOppositeNum=num;
 	}
 	private void setMove(int i) {
 		move=i;
 	}
+
+	private int getSendOfferNum() {
+		return sendOfferNum;
+	}
+
 	private void setSendOfferNum(int i) {
 		sendOfferNum=i;
 	}

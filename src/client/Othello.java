@@ -30,7 +30,7 @@ public class Othello {
 		 othello[4][4]=2;
 		 othello[4][3]=1;
 		 othello[3][4]=1;
-		 int n=1;
+		 /*int n=1;
 		 for(i=1; i<x-1; i++) {
 			 for(j=1; j<x-1; j++) {
 				 othello[i][j]=n;//盤面初期化
@@ -40,7 +40,7 @@ public class Othello {
 					 n=1;
 				 }
 			 }
-		 }
+		 }*/
 
 
 
