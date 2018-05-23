@@ -17,12 +17,12 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 
 public class MenuPanel extends JPanel{
-	Client client;
-	Player my;
+	private Client client;
+	private Player my;
 
-	Font f=new Font("Arial",Font.PLAIN,50);
+	private Font f=new Font("Arial",Font.PLAIN,50);
 
-	int screenIsPlayMain=0;//0:false,1:true
+	private int screenIsPlayMain=0;//0:false,1:true
 
 
 	MenuPanel(Client cl,Player my){
@@ -32,7 +32,7 @@ public class MenuPanel extends JPanel{
 
 	}
 
-	public void background() {//簡単のために背景表示のみメソッドを分割
+	private void background() {//簡単のために背景表示のみメソッドを分割
 
 
 		JLabel bg = new JLabel();
@@ -45,7 +45,7 @@ public class MenuPanel extends JPanel{
 
 	}
 
-	public void backToMenu() {
+	private void backToMenu() {
 		JButton backToMain=new JButton("Back to Menu");
 
 		backToMain.setBounds(50,900,400,50);
@@ -64,14 +64,13 @@ public class MenuPanel extends JPanel{
 		add(backToMain,0);
 	}
 
-	public void backToPlayMain() {
+	private void backToPlayMain() {
 		JButton backToPlayMain=new JButton("Back");
 
 		backToPlayMain.setBounds(50,900,400,50);
 		backToPlayMain.setFont(f);
 		backToPlayMain.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {//login2_button_click_event
-				//repaint();
 
 				reloadPlayMain();
 			}
@@ -80,7 +79,7 @@ public class MenuPanel extends JPanel{
 		add(backToPlayMain,0);
 	}
 
-	public void cancelOffer(int i,String id) {//0:自分がキャンセル, 1:相手にキャンセルされる
+	private void cancelOffer(int i,String id) {//0:自分がキャンセル, 1:相手にキャンセルされる
 		JButton cancelOffer=new JButton("Back");
 
 		cancelOffer.setBounds(50,900,400,50);
@@ -89,14 +88,10 @@ public class MenuPanel extends JPanel{
 			public void actionPerformed(ActionEvent e) {//login2_button_click_event
 
 				if(i==0) {
-					client.setNowOfferPlayer("");
-					client.sendMessage("70"+id);
+					client.sendMessage("40"+id);
 				}
 
 				reloadPlayMain();
-
-				//repaint();
-
 			}
 		});
 
@@ -119,8 +114,14 @@ public class MenuPanel extends JPanel{
 		JTextPane rule=new JTextPane();
 
 
-		rule.setText("～ルール説明～\nここで行うゲームは基本的なオセロのルールと何も変わりません。\nただし、以下の点には注意してください。\n・対戦する際、先に接続した方が黒となり先手となります。\n・ここでは1手打つ際に制限時間があります。制限時間を過ぎると、\n打つことが可能な場所にランダムに打たれます。\n・“パス”ボタンを押すと制限時間を過ぎたとき同様、ランダムに打たれます。\n・“投了”は負け扱いとなりますが、投了数としても戦績に残されます。");
-		//rule.setHorizontalAlignment(JLabel.CENTER);
+		rule.setText("～ルール説明～\nここで行うゲームは基本的なオセロのルールと何も変わりません。"
+					+ "\nただし、以下の点には注意してください。"
+					+ "\n・対戦する際、先に接続した方が黒となり先手となります。"
+					+ "\n・ここでは1手打つ際に制限時間があります。制限時間を過ぎると、"
+					+ "\n打つことが可能な場所にランダムに打たれます。"
+					+ "\n・“パス”ボタンを押すと制限時間を過ぎたとき同様、ランダムに打たれます。"
+					+ "\n・“投了”は負け扱いとなりますが、投了数としても戦績に残されます。");
+
 		rule.setOpaque(false);
 		rule.setBounds(150,250,1300,500);
 		rule.setFont(new Font("MS Gothic",Font.PLAIN,35));
@@ -128,7 +129,6 @@ public class MenuPanel extends JPanel{
 
 
 		JButton close=new JButton("close");
-
 
 		close.setBounds(50,900,400,50);
 		close.setFont(f);
@@ -154,7 +154,6 @@ public class MenuPanel extends JPanel{
 		JButton signout=new JButton("Sign Out");
 		JLabel playerID=new JLabel("ID: "+my.getID()+" さん");
 		JLabel playerResult=new JLabel("勝: "+my.getWin()+" 負: "+my.getLose()+" 分: "+my.getDraw()+" 投了: "+my.getGiveUp());
-
 
 		removeAll();
 
@@ -203,20 +202,16 @@ public class MenuPanel extends JPanel{
 		add(search,0);
 		add(signout,0);
 
-
 		repaint();
 	}
 
-	public void search() {//探したいプレイヤーの入力画面
-
+	private void search() {//探したいプレイヤーの入力画面
 
 		JLabel menuBg = new JLabel();
 		JLabel msg=new JLabel("検索したいplayerIDを入力してください。");
 		JTextField searchID=new JTextField(16);
 		JButton search=new JButton("検索");
 		JLabel errorMsg=new JLabel("");
-
-
 
 		removeAll();
 
@@ -246,32 +241,14 @@ public class MenuPanel extends JPanel{
 				}else{
 					errorMsg.setText("");
 					input_id=searchID.getText();
-					//test
-					System.out.println(input_id);
-
-
-					//debug用
-					/*Player[] p=new Player[50];
-
-					for(int i=0;i<50;i++) {
-						p[i]=my;
-
-					}
-
-					results(p);*/
-
-					//終わり
 
 					client.sendMessage("2"+input_id);//サーバにメッセージ送信
 
-					//client.sendMsg(input_id);
 					errorMsg.setText("サーバと通信中・・・");
 
 					client.receiveHandler(1);//データ要求
 
-					//サーバに接続するメソッドに（clientクラスに戻したほうがいいかも）　確認中などのメッセージ表示させたい
 					remove(search);
-					//メインに戻るを消すかどうするか
 					repaint();
 				}
 			}
@@ -292,7 +269,6 @@ public class MenuPanel extends JPanel{
 	}
 
 	public void results(Player player,String[] s) {//戦績表示　引数にplayer型の配列
-		//スクロールバー(表示する条件も分岐できれば尚良し)の追加が必要
 
 		JLabel menuBg = new JLabel();
 
@@ -332,21 +308,12 @@ public class MenuPanel extends JPanel{
 		scrollpane.setBounds(50,250,1500-105,625);
 		scrollpane.setBorder(null);//枠線消す
 
-
-
 		removeAll();
 		background();
 		backToMenu();
 
-
-
 		resultArea.setBackground(Color.GRAY);
 		resultArea.setPreferredSize(new  Dimension(750,50*(s.length)+1));//Task数に合わせてPanelのサイズを変更する
-
-
-
-		//resultArea.setPreferredSize(new  Dimension(750,25));
-
 
 		historyColumn1=new JLabel("対戦相手のID");
 		historyColumn1.setHorizontalAlignment(JLabel.CENTER);
@@ -364,14 +331,7 @@ public class MenuPanel extends JPanel{
 		historyColumn2.setBackground(Color.RED);
         historyColumn2.setOpaque(true);
 
-
-
-
-
-        System.out.println("s:"+s.length);
-
 		for(int i=0;i<s.length;i++){
-	        System.out.println(i);
 
 	        String name=s[i].split("/")[0];
 	        String r=s[i].split("/")[1];
@@ -457,18 +417,14 @@ public class MenuPanel extends JPanel{
 		repaint();
 	}
 
-
 	public void playMain(Player[] onlinePlayers,Player[] offerPlayers) {//オンラインプレイヤーの表示
 		screenIsPlayMain=1;
-
 
 		removeAll();
 		background();
 		backToMenu();
 
-
 		client.receiveHandler(1);//この画面では、常にオファーを受信するため
-
 
 		JLabel title=new JLabel("現在オンラインのプレイヤー");
 
@@ -501,8 +457,6 @@ public class MenuPanel extends JPanel{
 				}
 			});
 		}
-
-
 
 		BufferedImage reloadImage=null;
 
@@ -564,10 +518,7 @@ public class MenuPanel extends JPanel{
 		onlineColumn2.setBackground(Color.RED);
 		onlineColumn2.setOpaque(true);
 
-
-
 		for(int i=0;i<onlinePlayers.length;i++){
-	        System.out.println(i);
 
 	        onlineID[i]=new JButton(onlinePlayers[i].getID());
 	        onlineID[i].setHorizontalAlignment(JLabel.CENTER);
@@ -600,7 +551,6 @@ public class MenuPanel extends JPanel{
 
 	        onlineID[i].addActionListener(new clickPlayID());//actionlister clickIDへ飛ばす
 
-	        //playerArea.setPreferredSize(new  Dimension(750,25*(i+2)));//Task数に合わせてPanelのサイズを変更する
 	        playerArea.add(onlineID[i]);
 	        playerArea.add(onlineResult[i]);
 
@@ -618,16 +568,14 @@ public class MenuPanel extends JPanel{
 
 		repaint();
 
-
-
 	}
 
-	public void reloadPlayMain(){//明示化するためにわざとこのメソッド追加
+	private void reloadPlayMain(){//明示化するためにわざとこのメソッド追加
 		client.sendMessage("31");//サーバにメッセージ送信
 
 	}
 
-	public void playSelect(String id) {//オファーを送るかの画面
+	private void playSelect(String id) {//オファーを送るかの画面
 		screenIsPlayMain=0;
 
 		removeAll();
@@ -662,9 +610,7 @@ public class MenuPanel extends JPanel{
 
 				repaint();
 
-				client.sendMessage("71"+id);
-
-				client.setNowOfferPlayer(id);
+				client.sendMessage("41"+id);
 
 				cancelOffer(0,id);
 
@@ -697,9 +643,7 @@ public class MenuPanel extends JPanel{
 		background();
 		cancelOffer(1,"");
 
-
 		JLabel msg=new JLabel();
-
 
 		if(i==0) {
 			msg.setText(id+" さんに送信したオファーはキャンセルされました。");
@@ -722,7 +666,6 @@ public class MenuPanel extends JPanel{
 
 		removeAll();
 		background();
-		//backToMenu();
 		backToPlayMain();
 
 		JLabel title=new JLabel("オファーを受信したプレイヤー");
@@ -755,8 +698,6 @@ public class MenuPanel extends JPanel{
 		scrollpane.setBounds(50,250,1500-105,625);
 		scrollpane.setBorder(null);//枠線消す
 
-
-
 		playerArea.setBackground(Color.GRAY);
 		playerArea.setPreferredSize(new  Dimension(750,50*(offerPlayers.length)+1));//Task数に合わせてPanelのサイズを変更する
 
@@ -777,10 +718,7 @@ public class MenuPanel extends JPanel{
 		onlineColumn2.setBackground(Color.RED);
 		onlineColumn2.setOpaque(true);
 
-
-
 		for(int i=0;i<offerPlayers.length;i++){
-	        System.out.println(i);
 
 	        onlineID[i]=new JButton(offerPlayers[i].getID());
 	        onlineID[i].setHorizontalAlignment(JLabel.CENTER);
@@ -813,7 +751,6 @@ public class MenuPanel extends JPanel{
 
 	        onlineID[i].addActionListener(new clickOfferID());//actionlister clickIDへ飛ばす
 
-	        //playerArea.setPreferredSize(new  Dimension(750,25*(i+2)));//Task数に合わせてPanelのサイズを変更する
 	        playerArea.add(onlineID[i]);
 	        playerArea.add(onlineResult[i]);
 
@@ -829,12 +766,10 @@ public class MenuPanel extends JPanel{
 
 		repaint();
 
-
-
 	}
 
 
-	public void offerSelect(String id) {//オファーを受理するかの画面
+	private void offerSelect(String id) {//オファーを受理するかの画面
 		screenIsPlayMain=0;
 
 		removeAll();
@@ -866,9 +801,9 @@ public class MenuPanel extends JPanel{
 
 				removeAll();//一応ボタン連続でほかのおさないように
 
-				client.sendMessage("81"+id);
+				client.sendMessage("51"+id);
 				//オファー受理して対戦
-				System.out.println("オファー受理して対戦");
+				System.out.println(id+"さんのオファー受理");
 
 			}
 		});
@@ -882,13 +817,12 @@ public class MenuPanel extends JPanel{
 			public void actionPerformed(ActionEvent e) {//_click_event
 				removeAll();//一応ボタン連続でほかのおさないように
 
-				client.sendMessage("80"+id);
+				client.sendMessage("50"+id);
 				client.removeOfferPlayer(id);
 
-
 				reloadPlayMain();
-				//オファー拒否のメッセージ送信
-				System.out.println("オファー拒否のメッセージ送信");
+				//オファーを拒否
+				System.out.println(id+"さんのオファー拒否");
 			}
 		});
 
@@ -908,18 +842,15 @@ public class MenuPanel extends JPanel{
 		screenIsPlayMain=i;
 	}
 
-
-	class clickPlayID implements ActionListener{//idをクリックしたときのアクションイベント
+	private class clickPlayID implements ActionListener{//idをクリックしたときのアクションイベント
 		 public void actionPerformed(ActionEvent e) {
 			 playSelect(e.getActionCommand());
-			 //System.out.println(e.getActionCommand());//test
 		 }
 	}
 
-	class clickOfferID implements ActionListener{//idをクリックしたときのアクションイベント
+	private class clickOfferID implements ActionListener{//idをクリックしたときのアクションイベント
 		 public void actionPerformed(ActionEvent e) {
 			 offerSelect(e.getActionCommand());
-			 //System.out.println(e.getActionCommand());//test
 		 }
 	}
 

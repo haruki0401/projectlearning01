@@ -17,39 +17,39 @@ import javax.swing.JFrame;
 
 public class Client extends JFrame{
 
-	public static final int x=1500;
-	public static final int y=1000;
+	private final static int NEW_PLAYER = 0;			//プレイヤーの新規登録
+	private final static int LOGIN = 1;					//ログイン
+	private final static int RESULT = 2;				//戦績表示
+	private final static int ONLINE = 3;				//online（オファー送受信可能状態）画面へ
+	private final static int OFFER_FROM_OTHER = 4;		//相手からオファー
+	private final static int REPLY_FROM_OTHER = 5;		//相手からオファーの返事
+	private final static int WHERE_PUT= 6;				//相手がどこに手を置いたかの情報
+	private final static int OPPONENT_DISCONNECT= 7;	//相手が切断した情報
+	private final static int GAME_FINISH = 8;			//ゲームを終了しmenu画面へ
+
+
+	private static final int x=1500;
+	private static final int y=1000;
 
 	private static int receiveHandler=0;//1:データ受信要求中
 
 	private PrintWriter out;
 	private Receiver receiver;
 
-	//private String tempPlayerID;//一時的なIDの保存
-
 	private Player my;
 	private ArrayList<Player> getOfferPlayer = new ArrayList<Player>();//offer人数
 
-	private String nowOfferPlayer="";
+	private MainPanel mainPanel=new MainPanel(this);
+	private MenuPanel menuPanel;
 
-	//panel作成
-	//public String[] PanelNames= {"main","menu","Othello"};
-
-	MainPanel mainPanel=new MainPanel(this);
-	MenuPanel menuPanel;
-
+//わからん
 	OthelloPanel othelloPanel;
 
 
-	public Client() {//コンストラクタ
+	private Client() {//コンストラクタ
 		this.add(mainPanel);
 		mainPanel.setLayout(null);
 		mainPanel.setVisible(true);
-
-		/*this.add(menuPanel);
-		menuPanel.setLayout(null);
-		menuPanel.setVisible(false);*/
-
 		this.setSize(x,y);
 	}
 
@@ -67,10 +67,6 @@ public class Client extends JFrame{
 			//受信用object
 			receiver=new Receiver(socket);
 			receiver.start();
-			//socket.close();//これはいるのか？
-
-
-
 
 
 		}catch(UnknownHostException e) {
@@ -79,16 +75,14 @@ public class Client extends JFrame{
 		}catch(IOException e) {
 			System.out.println("サーバー接続時にエラーが発生しました: "+e);
 			mainPanel.connectError();
-			//mainPanel.mainScreen();//とりあえず今はサーバに接続できないのでエラーで表示するように（）
 		}
 	}
 
 	//データ送信用メソッド
-
 	public void sendMessage(String msg){	// サーバに操作情報を送信
 		out.println(msg);//送信データをバッファに書き出す
 		out.flush();//送信データを送る
-		System.out.println("サーバにメッセージ " + msg+ " を送信しました"); //テスト標準出力
+		System.out.println("サーバにメッセージ[" + msg+ "]を送信しました"); //テスト標準出力
 	}
 
 	public void receiveHandler(int i){//receiveHandler:データ受信をクライアントが欲している状態であるかどうかを判断する変数
@@ -113,7 +107,7 @@ public class Client extends JFrame{
 			try {
 				while(true) {
 					String inputLine=br.readLine();
-					//if(inputLine!=null) {//試験用
+
 					if(inputLine!=null&&receiveHandler==1) {
 						classifyMsg(inputLine,br);
 					}
@@ -126,7 +120,7 @@ public class Client extends JFrame{
 
 
 	public void classifyMsg(String msg,BufferedReader br) {//ここで受信データの種類判別
-		System.out.println("サーバからメッセージ " + msg + " を受信しました"); //テスト用標準出力
+		System.out.println("サーバからメッセージ[" + msg + "]を受信しました"); //テスト用標準出力
 
 
 
@@ -136,7 +130,7 @@ public class Client extends JFrame{
 
 		switch(type){
 
-		case 0:{
+		case NEW_PLAYER:{
 
 			receiveHandler=0;
 
@@ -151,7 +145,7 @@ public class Client extends JFrame{
 			break;
 		}
 
-		case 1:{
+		case LOGIN:{
 			receiveHandler=0;
 
 			if(msg.equals("10")) {//login失敗
@@ -159,63 +153,34 @@ public class Client extends JFrame{
 			}else if((msg.substring(0,2)).equals("11")) {//成功
 				my=new Player(msg.substring(2));
 
-				//this.remove(mainPanel);
-
-				//repaint();
-
 				menuPanel=new MenuPanel(this,my);
 
-				//test
-
-				//othelloPanel=new OthelloPanel(1,this);
-
-
-
-				/*this.add(menuPanel);
-				menuPanel.setLayout(null);
-				menuPanel.setVisible(true);*/
-
-				changePanel(0,1);
-
-
-
+				changePanel(0,1);//menuPanelに遷移
 				menuPanel.ruleScreen();
-
-
-
 			}
-
-
 			break;
 		}
 
-		case 2:{
+		case RESULT:{
 			receiveHandler=0;
 
 			String str=msg.substring(1);
 
-			//Player[] players;
 			ArrayList<String> results = new ArrayList<String>();
 			Player player=null;
 
 			if(!(str.equals(""))) {
 				player=new Player(str);
-				System.out.println("!");
 			}
 
 			try {
 				while(br.ready()) {
 					str=br.readLine();
-
-					System.out.println("str:"+str);
 					results.add(str);
-					System.out.println("!");
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
-
 
 			String[]  s= results.toArray(new String[results.size()]);
 
@@ -225,24 +190,21 @@ public class Client extends JFrame{
 				menuPanel.results(player,s);
 			}
 
-
 			break;
 		}
 
-		case 3:{
+		case ONLINE:{
 			receiveHandler=0;
 
 			String str=msg.substring(1);
 
 			ArrayList<Player> onlinePlayers = new ArrayList<Player>();
-
 			Player player=null;
 
 
 			if(!(str.equals(""))) {
 				player=new Player(str);
 				onlinePlayers.add(player);
-				System.out.println("!");
 			}
 
 			try {
@@ -250,7 +212,6 @@ public class Client extends JFrame{
 					str=br.readLine();
 					player=new Player(str);
 					onlinePlayers.add(player);
-					System.out.println("!");
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -267,59 +228,7 @@ public class Client extends JFrame{
 			break;
 		}
 
-
-
-		case 4:{
-			if(othelloPanel.oB.bw==1) {
-				othelloPanel.oB.giveUp(2);
-			}else {
-				othelloPanel.oB.giveUp(1);
-			}
-            othelloPanel.jend.setEnabled(true);//対局終了時にtrueに変更
-
-			break;
-		}
-		case 5:{
-			//receiveHandler=0;
-	        if(othelloPanel.turn==1 && othelloPanel.oB.bw==2) {
-	        	othelloPanel.turn=2;
-	        }else {
-	        	//othelloPanel.turn=1;
-	        }
-
-
-	        if(othelloPanel.turn==1) {
-				System.out.println("白が"+msg+"万を受信");
-	        }else {
-				System.out.println("黒が"+msg+"万を受信");
-	        }
-
-	        char[] rivalInfo=msg.toCharArray();
-//	        System.out.println(rivalInfo[0]+"万");//turn
-//	        System.out.println(rivalInfo[1]+"万");//i
-//	        System.out.println(rivalInfo[2]+"万");//j
-	        int[] InfoNum=new int[3];
-	     //   InfoNum[1]=Character.getNumericValue(rivalInfo[1]);
-	        InfoNum[1]=Character.getNumericValue(rivalInfo[1]);
-	        InfoNum[2]=Character.getNumericValue(rivalInfo[2]);
-	   //     System.out.println(InfoNum[1]);//turn
-//	        System.out.println(InfoNum[1]);//i
-//	        System.out.println(InfoNum[2]);//j
-//	        System.out.println(othelloPanel.oB.bw+"万");
-	 //       othelloPanel.turn=InfoNum[1];
-
-	        othelloPanel.rivalI=InfoNum[1];
-	        othelloPanel.rivalJ=InfoNum[2];
-
-
-//	        	if(othelloPanel.turn==othelloPanel.oB.bw) {//相手からの情報が来たとき
-	        			othelloPanel.waiting();
-//	        	}
-
-			break;
-		}
-
-		case 7:{//71+player: オファー受付,70+player: オファーキャンセル受付,72: オファー配列クリア
+		case OFFER_FROM_OTHER:{//41+player: オファー受付,40+player: オファーキャンセル受付,42: オファー配列クリア
 
 			String str=msg.substring(2);
 
@@ -342,13 +251,6 @@ public class Client extends JFrame{
 					}
 				}
 
-				/*if(nowOfferPlayer.equals(player.getID())) {//今自分がオファー送信してた人からのキャンセルの場合
-
-					nowOfferPlayer="";
-
-					menuPanel.opponentCancel(player.getID());
-
-				}*/
 			}
 
 			else if(msg.charAt(1)=='2') {
@@ -356,63 +258,103 @@ public class Client extends JFrame{
 			}
 
 
-
-
-			//Player[]  s= getOfferPlayer.toArray(new Player[getOfferPlayer.size()]);
-
 			if(menuPanel.getScreenIsPlayMain()==1) {
-				//System.out.println("reload");
-
 				sendMessage("31");//更新ついでにnow playerも更新
 			}
-
 
 			break;
 		}
 
-		case 8:{//800+playerキャンセル,811or812+player:マッチング成立 820+player:受理したが相手が切断
+		case REPLY_FROM_OTHER:{//500+playerキャンセル,511or512+player:マッチング成立 520+player:受理したが相手が切断
 
 
 			String str=msg.substring(3);
 
 			Player player=new Player(str);
 
-			if(msg.substring(0,3).equals("800")) {
+			if(msg.substring(0,3).equals("500")) {
 				//オファーキャンセルなどのエラー、onlinePlayerに戻る
 				menuPanel.opponentCancel(0,player.getID());
 			}
-			else if(msg.substring(0,3).equals("811")) {//811:黒
-				//receiveHandler=0;
-
+			else if(msg.substring(0,3).equals("511")) {//811:黒
 				//マッチング成立、オセロパネルに遷移
-				//menuPanel.setScreenIsPlayMain(0);
-//				othelloPanel=new OthelloPanel(1,this);
 
 				othelloPanel=new OthelloPanel(1,this,my,player);
-
-
 				changePanel(1,2);
 			}
-			else if(msg.substring(0,3).equals("812")) {//812:白
-				//receiveHandler=0;
-
+			else if(msg.substring(0,3).equals("512")) {//812:白
 				//マッチング成立、オセロパネルに遷移
-				//menuPanel.setScreenIsPlayMain(0);
-//				othelloPanel=new OthelloPanel(2,this);
 
 				othelloPanel=new OthelloPanel(2,this,my,player);
-
-
 				changePanel(1,2);
 			}
-			else if(msg.substring(0,3).equals("820")) {
+			else if(msg.substring(0,3).equals("520")) {
 				menuPanel.opponentCancel(1,player.getID());
 			}
 
 			break;
 		}
 
-		case 9:{
+//わからんはじまり
+
+
+
+		case WHERE_PUT:{
+			//receiveHandler=0;
+	        if(othelloPanel.turn==1 && othelloPanel.oB.bw==2) {
+	        	othelloPanel.turn=2;
+	        }else {
+	        	//othelloPanel.turn=1;
+	        }
+
+
+	        if(othelloPanel.turn==1) {
+				System.out.println("白が"+msg+"万を受信");
+	        }else {
+				System.out.println("黒が"+msg+"万を受信");
+	        }
+
+	        char[] rivalInfo=msg.toCharArray();
+	        //			        System.out.println(rivalInfo[0]+"万");//turn
+	        //			        System.out.println(rivalInfo[1]+"万");//i
+	        //			        System.out.println(rivalInfo[2]+"万");//j
+	        int[] InfoNum=new int[3];
+	     //   InfoNum[1]=Character.getNumericValue(rivalInfo[1]);
+	        InfoNum[1]=Character.getNumericValue(rivalInfo[1]);
+	        InfoNum[2]=Character.getNumericValue(rivalInfo[2]);
+	   //     System.out.println(InfoNum[1]);//turn
+	        //			        System.out.println(InfoNum[1]);//i
+	        //			        System.out.println(InfoNum[2]);//j
+	        //			        System.out.println(othelloPanel.oB.bw+"万");
+	 //       othelloPanel.turn=InfoNum[1];
+
+	        othelloPanel.rivalI=InfoNum[1];
+	        othelloPanel.rivalJ=InfoNum[2];
+
+
+	        //			        	if(othelloPanel.turn==othelloPanel.oB.bw) {//相手からの情報が来たとき
+	        			othelloPanel.waiting();
+	        			//			        	}
+
+			break;
+		}
+
+
+		case OPPONENT_DISCONNECT:{
+			if(othelloPanel.oB.bw==1) {
+				othelloPanel.oB.giveUp(2);
+			}else {
+				othelloPanel.oB.giveUp(1);
+			}
+            othelloPanel.jend.setEnabled(true);//対局終了時にtrueに変更
+
+			break;
+		}
+
+//わからんおわり
+
+
+		case GAME_FINISH:{
 			receiveHandler=0;
 
 			my=new Player(msg.substring(1));
@@ -420,8 +362,6 @@ public class Client extends JFrame{
 			menuPanel=new MenuPanel(this,my);
 
 			changePanel(2,1);
-
-
 
 			menuPanel.menuScreen();
 		}
@@ -461,17 +401,10 @@ public class Client extends JFrame{
 
 	}
 
-
-	public void setNowOfferPlayer(String id) {
-		nowOfferPlayer=id;
-	}
-
 	public void removeOfferPlayer(String id) {
 		for(int i=0;i<getOfferPlayer.size();i++) {
 			if(getOfferPlayer.get(i).getID().equals(id)) {
 				getOfferPlayer.remove(i);
-
-				System.out.println("remove");
 				break;
 			}
 		}
@@ -500,7 +433,6 @@ public class Client extends JFrame{
 		int port=Integer.parseInt(args[1]);
 
 		client.connectServer(ipAddress,port);
-
 
 	}
 

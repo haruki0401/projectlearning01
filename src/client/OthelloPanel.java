@@ -100,10 +100,10 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
         int sum1,sum2;
         int lose1,lose2;
 
-        sum1=Integer.parseInt(this.my.win)+Integer.parseInt(this.my.draw)+Integer.parseInt(this.my.lose)+Integer.parseInt(this.my.giveUp);
-        sum2=Integer.parseInt(this.player.win)+Integer.parseInt(this.player.draw)+Integer.parseInt(this.player.lose)+Integer.parseInt(this.player.giveUp);
-        lose1=Integer.parseInt(this.my.lose)+Integer.parseInt(this.my.giveUp);
-        lose2=Integer.parseInt(this.player.lose)+Integer.parseInt(this.player.giveUp);
+        sum1=Integer.parseInt(this.my.getWin())+Integer.parseInt(this.my.getDraw())+Integer.parseInt(this.my.getLose())+Integer.parseInt(this.my.getGiveUp());
+        sum2=Integer.parseInt(this.player.getWin())+Integer.parseInt(this.player.getDraw())+Integer.parseInt(this.player.getLose())+Integer.parseInt(this.player.getGiveUp());
+        lose1=Integer.parseInt(this.my.getLose())+Integer.parseInt(this.my.getGiveUp());
+        lose2=Integer.parseInt(this.player.getLose())+Integer.parseInt(this.player.getGiveUp());
 
         blackData01=new JLabel("黒");
         blackData01.setFont(new Font("MS Gothic",Font.PLAIN,36));
@@ -115,7 +115,7 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
         blackData02.setBounds(350,100,100,50);
         add(blackData02);
 
-        blackData03=new JLabel(this.my.playerID);
+        blackData03=new JLabel(this.my.getID());
         blackData03.setFont(new Font("MS Gothic",Font.PLAIN,20));
         blackData03.setBounds(350,120,100,50);
         add(blackData03);
@@ -125,7 +125,7 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
         blackData04.setBounds(350,180,100,50);
         add(blackData04);
 
-        blackData05=new JLabel(sum1+"戦 "+this.my.win+"勝 "+lose1+"敗 "+this.my.draw+"分");
+        blackData05=new JLabel(sum1+"戦 "+this.my.getWin()+"勝 "+lose1+"敗 "+this.my.getDraw()+"分");
         blackData05.setFont(new Font("MS Gothic",Font.PLAIN,20));
         blackData05.setBounds(350,200,300,50);
         add(blackData05);
@@ -142,7 +142,7 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
         whiteData02.setBounds(1000,100,100,50);
         add(whiteData02);
 
-        whiteData03=new JLabel(this.player.playerID);
+        whiteData03=new JLabel(this.player.getID());
         whiteData03.setFont(new Font("MS Gothic",Font.PLAIN,20));
         whiteData03.setBounds(1000,120,100,50);
         add(whiteData03);
@@ -152,7 +152,7 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
         whiteData04.setBounds(1000,180,100,50);
         add(whiteData04);
 
-        whiteData05=new JLabel(sum2+"戦 "+this.player.win+"勝 "+lose2+"敗 "+this.player.draw+"分");
+        whiteData05=new JLabel(sum2+"戦 "+this.player.getWin()+"勝 "+lose2+"敗 "+this.player.getDraw()+"分");
         whiteData05.setFont(new Font("MS Gothic",Font.PLAIN,20));
         whiteData05.setBounds(1000,200,300,50);
         add(whiteData05);
@@ -186,7 +186,7 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
         jend.setBounds(50,600,100,50);//ボタンの大きさと位置を設定する．(x座標，y座標,xの幅,yの幅）
         jend.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {//_click_event
-                client.sendMessage("4");
+                client.sendMessage("8");
                 client.changePanel(2,1);
             }
         });
@@ -277,7 +277,7 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
         	if(oB.othello[theArrayIndexOfI][theArrayIndexOfJ]==4) { //黒が手を打つ
     			//oB.bw=2;//一人プレイ用
         			oB.playB(theArrayIndexOfI,theArrayIndexOfJ);
-        			client.sendMessage("5"+theArrayIndexOfI+theArrayIndexOfJ);//識別子i,j
+        			client.sendMessage("6"+theArrayIndexOfI+theArrayIndexOfJ);//識別子i,j
     				client.receiveHandler(1);
     				oB.randJudge=0;//未定
         			oB.endJudge=0;//passの回reset
@@ -311,7 +311,7 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
             System.out.println("white");
             if(oB.othello[theArrayIndexOfI][theArrayIndexOfJ]==4) {
             	oB.playW(theArrayIndexOfI,theArrayIndexOfJ);
-    			client.sendMessage("5"+theArrayIndexOfI+theArrayIndexOfJ);
+    			client.sendMessage("6"+theArrayIndexOfI+theArrayIndexOfJ);
     			client.receiveHandler(1);
    				oB.randJudge=0;//未定
             	oB.endJudge=0;
@@ -345,7 +345,7 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
             	if(oB.bw==1) {
             			//oB.giveUp(1);
             		oB.endJudge=2;
-            			client.sendMessage("599");
+            			client.sendMessage("699");
             			client.receiveHandler(1);
 	        			whichTurn.setText("投了しました。");
 
@@ -363,7 +363,7 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
             	}else {
         			//oB.giveUp(2);
             		oB.endJudge=2;
-        			client.sendMessage("599");
+        			client.sendMessage("699");
         			client.receiveHandler(1);
 
         			whichTurn.setText("投了しました。");
@@ -386,7 +386,7 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
                     oB.endJudge++;
 
                     oB.judge();
-        			client.sendMessage("588");
+        			client.sendMessage("688");
         			client.receiveHandler(1);
         	        System.out.println("afterPasssendJudge="+oB.endJudge);
 
@@ -409,7 +409,7 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
 //            	}else {
 //                    oB.endJudge++;
 //                    oB.judge();
-//        			client.sendMessage("588");
+//        			client.sendMessage("688");
 //        			client.receiveHandler(1);
 //                   // oB.choiceB();
 //                    apply();
@@ -718,10 +718,10 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
 				}
 				System.out.println("rand実行");
 				if(oB.randJudge>0) {
-    			client.sendMessage("5"+oB.r1+oB.r2);//識別子i,j
+    			client.sendMessage("6"+oB.r1+oB.r2);//識別子i,j
     			oB.endJudge=0;//passの回reset
 				}else {
-	    			client.sendMessage("588");//識別子i,j
+	    			client.sendMessage("688");//識別子i,j
 	    			oB.endJudge++;//passの回inc
 				}
 				client.receiveHandler(1);

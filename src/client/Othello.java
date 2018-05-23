@@ -500,11 +500,11 @@ public class Othello {
 
 	 static void sendCode(int p) {//勝敗コードの送信用
 		 if(p==0) {
-			 cl.sendMessage("6win");
+			 cl.sendMessage("7win");
 		 }else if(p==1){
-			 cl.sendMessage("6earlyWin");
+			 cl.sendMessage("7earlyWin");
 		 }else{
-			 cl.sendMessage("6draw");
+			 cl.sendMessage("7draw");
 			 }
 		 sendedMessage=1;//sendMessgeされた
 	 }

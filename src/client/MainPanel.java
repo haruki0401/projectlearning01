@@ -16,21 +16,17 @@ import javax.swing.JTextField;
 
 public class MainPanel extends JPanel{
 
-	Client client;
+	private Client client;
 
-	Font f=new Font("Arial",Font.PLAIN,50);
+	private Font f=new Font("Arial",Font.PLAIN,50);
 
-	//JLabel errorMsg=new JLabel("");//入力エラー時のメッセージ
 
 
 	MainPanel(Client cl){
-		client=cl;
-		//this.setName(name);
-
-		//mainScreen();
+		this.client=cl;
 	}
 
-	public void background() {//簡単のために背景表示のみメソッドを分割
+	private void background() {//簡単のために背景表示のみメソッドを分割
 		BufferedImage bgImage=null;
 
 		try {
@@ -48,7 +44,7 @@ public class MainPanel extends JPanel{
 
 	}
 
-	public void backToMain() {
+	private void backToMain() {
 		JButton backToMain=new JButton("Back to Main");
 
 		backToMain.setBounds(50,900,400,50);
@@ -94,16 +90,10 @@ public class MainPanel extends JPanel{
 			}
 		});
 
-
-
-
 		title.setHorizontalAlignment(JLabel.CENTER);
-	    //title.setPreferredSize(new Dimension(550,200));
-		title.setBounds(550,200,400,50);
-		title.setFont(f);
-		title.setForeground(Color.RED);
-		title.setFont(f);
-
+		title.setBounds(0,200,1500,100);
+		title.setFont(new Font("Arial",Font.BOLD,100));
+		title.setForeground(Color.YELLOW);
 
 		add(createID,0);
 		add(login,0);
@@ -112,7 +102,7 @@ public class MainPanel extends JPanel{
 		repaint();
 	}
 
-	public void loginScreen(int i){//ログイン画面に遷移,引数0:新規作成,1:ログイン
+	private void loginScreen(int i){//ログイン画面に遷移,引数0:新規作成,1:ログイン
 
 		removeAll();
 
@@ -129,18 +119,14 @@ public class MainPanel extends JPanel{
 		JButton login2=new JButton();//このボタンだけ、ログインのときと新規作成のときで分岐
 		JLabel errorMsg=new JLabel("");//入力エラー時のメッセージ
 
-
-
 		loginBg.setOpaque(true);
 		loginBg.setBounds(375,125,750,750);
 		loginBg.setBackground(Color.BLACK);
-
 
 		loginMsg.setHorizontalAlignment(JLabel.CENTER);
 		loginMsg.setBounds(500,200,500,50);
 		loginMsg.setFont(new Font("MS Gothic",Font.PLAIN,25));
 		loginMsg.setForeground(Color.WHITE);
-
 
 		attentionMsg.setHorizontalAlignment(JLabel.CENTER);
 		attentionMsg.setBounds(500,250,500,50);
@@ -200,20 +186,13 @@ public class MainPanel extends JPanel{
 					input_id=id.getText();
 					input_pass=temppass;
 
-					//test
-					System.out.println(input_id);
-					System.out.println(input_pass);
-
 					if(i==0) {
-						//client.getTempPlayerID(input_id);
+
 						client.sendMessage("0"+input_id+"\n"+input_pass);
 					}else if(i==1) {
-						//client.getTempPlayerID(input_id);
-						//client.sendMessage("1"+input_id+"\n"+input_pass);
-						client.sendMessage("11"+input_id+"\n"+input_pass);//log in は11から
 
+						client.sendMessage("11"+input_id+"\n"+input_pass);//log in は11から
 					}
-					//client.sendMsg(input_id);
 					errorMsg.setText("サーバと通信中・・・");
 
 					client.receiveHandler(1);//データ要求
