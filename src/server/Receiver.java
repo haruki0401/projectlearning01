@@ -163,6 +163,14 @@ public class Receiver extends Thread{
 							else if(inputLine.charAt(1)=='0') {
 								whereIs=1;//ログイン画面に戻ったこと
 
+								cancelOffer(null);
+
+//								System.out.println("opposite: "+decidedOppositeNum);
+								//add
+								receiveOfferPlayer.clear();//オファーされている配列をクリア
+								printWriter.println("72");//client側のoffer配列も変更する
+								printWriter.flush();
+
 								server.allPlayerOutput();//player一覧の更新
 
 							}
@@ -429,7 +437,7 @@ public class Receiver extends Thread{
 									decidedOppositeNum=oppositeNum;
 									server.receiver.get(decidedOppositeNum).setDecidedOppositeNum(myNumber);
 
-									sendOfferNum=-1;
+									//sendOfferNum=-1;
 									server.receiver.get(decidedOppositeNum).setSendOfferNum(-1);
 
 
@@ -539,7 +547,7 @@ public class Receiver extends Thread{
 			//System.err.println("クライアントとの接続が切れました．");
 			//server.delete(server.changeFromMyNum(myNumber));
 
-			for(int i=0;i<receiveOfferPlayer.size();i++) {//切断したのでオファーを受けていた全員にキャンセル送信
+			/*for(int i=0;i<receiveOfferPlayer.size();i++) {//切断したのでオファーを受けていた全員にキャンセル送信
 				//if(!(receiveOfferPlayer.get(i).sendID().equals("oppositeName"))) {
 					int cancelNum = server.changeFromID(receiveOfferPlayer.get(i).sendID());
 
@@ -549,7 +557,7 @@ public class Receiver extends Thread{
 					server.receiver.get(i).setWhereIs(2);
 					server.receiver.get(i).setSendOfferNum(-1);
 				//}
-			}
+			}*/
 
 
 			if(decidedOppositeNum!=-1) {
@@ -558,7 +566,26 @@ public class Receiver extends Thread{
 				server.receiver.get(decidedOppositeNum).printWriter.println("4");
 			}
 
+
+
+			if(whereIs==2||whereIs==3) {
+				cancelOffer(null);
+
+				sendOfferNum=-1;
+
+
+//				System.out.println("opposite: "+decidedOppositeNum);
+				//add
+				receiveOfferPlayer.clear();//オファーされている配列をクリア
+				printWriter.println("72");//client側のoffer配列も変更する
+				printWriter.flush();
+
+			}
+
+
 			whereIs=-1;//切断状態に移行
+
+			System.out.println("number "+myNumber+":切断");
 
 			server.allPlayerOutput();//player一覧の更新
 
@@ -606,13 +633,16 @@ public class Receiver extends Thread{
 
 
 	public void removeOfferPlayer(PlayerData player) {
+
+
 		for(int i=0;i<receiveOfferPlayer.size();i++) {
 			if(player==receiveOfferPlayer.get(i)) {
 				receiveOfferPlayer.remove(i);
-//				System.out.println("オファーキャンセル受付 from "+player.sendPlayerData());
+//					System.out.println("オファーキャンセル受付 from "+player.sendPlayerData());
 				break;
 			}
 		}
+
 
 	}
 }
