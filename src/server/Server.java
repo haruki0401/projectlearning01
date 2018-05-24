@@ -379,6 +379,9 @@ public class Server {
 				else if(where==4) {
 					state="対局中";
 				}
+				else if(where==5) {
+					state="対局終了";
+				}
 
 				System.out.println("number "+i+".ID: "+receiver.get(i).player.getID()+", "+state);
 			}

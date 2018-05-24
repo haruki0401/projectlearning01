@@ -32,7 +32,7 @@ public class Receiver extends Thread{
 
 
 	private int whereIs=0;//playerが今どの段階にいるか
-	//-1:切断 0:接続しただけand新規登録しただけand切断のときにも１を代入 1:ログイン済み 2:オンライン済み 3:オファー送信中 4:対局中
+	//-1:切断 0:接続しただけand新規登録しただけand切断のときにも１を代入 1:ログイン済み 2:オンライン済み 3:オファー送信中 4:対局中 5:対局終了
 
 	private int sendOfferNum=-1;//オファーしている人のmyNum,-1ならオファーしていない
 
@@ -328,6 +328,11 @@ public class Receiver extends Thread{
 									server.resultDraw(myNum, decidedOpponentNum);
 								}
 
+								server.receiver.get(decidedOpponentNum).setWhereIs(5);
+								whereIs=5;
+
+								server.displayPlayer();//player一覧の更新
+
 							}
 
 							break;
@@ -355,7 +360,7 @@ public class Receiver extends Thread{
 			}
 		} catch (IOException e){ // 接続が切れたとき
 
-			if(decidedOpponentNum!=-1) {
+			if(whereIs==4) {
 
 				//相手に切断した情報をおくる
 				server.receiver.get(decidedOpponentNum).printWriter.println("7");
