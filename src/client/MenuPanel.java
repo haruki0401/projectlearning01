@@ -45,7 +45,7 @@ public class MenuPanel extends JPanel{
 
 	}
 
-	private void backToMenu() {
+	private void backToMenu(int i) {//0: resultから,1:onlineから
 		JButton backToMain=new JButton("Back to Menu");
 
 		backToMain.setBounds(50,900,400,50);
@@ -54,7 +54,10 @@ public class MenuPanel extends JPanel{
 			public void actionPerformed(ActionEvent e) {//login2_button_click_event
 				menuScreen();
 				//repaint();
-				client.sendMessage("30");//オンラインからメニュー画面にもどったことを送信
+
+				if(i==1) {
+					client.sendMessage("30");//オンラインからメニュー画面にもどったことを送信
+				}
 
 				client.receiveHandler(0);//データ要求キャンセル
 
@@ -216,7 +219,7 @@ public class MenuPanel extends JPanel{
 		removeAll();
 
 		background();
-		backToMenu();
+		backToMenu(0);
 
 		menuBg.setOpaque(true);
 		menuBg.setBounds(0,125,1500,750);
@@ -310,7 +313,7 @@ public class MenuPanel extends JPanel{
 
 		removeAll();
 		background();
-		backToMenu();
+		backToMenu(0);
 
 		resultArea.setBackground(Color.GRAY);
 		resultArea.setPreferredSize(new  Dimension(750,50*(s.length)+1));//Task数に合わせてPanelのサイズを変更する
@@ -402,7 +405,7 @@ public class MenuPanel extends JPanel{
 	public void searchError() {
 		removeAll();
 		background();
-		backToMenu();
+		backToMenu(0);
 
 		JLabel errorMsg=new JLabel("検索されたIDのplayerは存在しません。");
 
@@ -422,7 +425,7 @@ public class MenuPanel extends JPanel{
 
 		removeAll();
 		background();
-		backToMenu();
+		backToMenu(1);
 
 		client.receiveHandler(1);//この画面では、常にオファーを受信するため
 
