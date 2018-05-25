@@ -55,7 +55,7 @@ public class Client extends JFrame{
 
 
 
-	private PrintWriter out;
+	PrintWriter out;
 
 	private Receiver receiver;
 
@@ -66,22 +66,18 @@ public class Client extends JFrame{
 	private ArrayList<Player> getOfferPlayer = new ArrayList<Player>();//offer人数
 
 
+	//driverを使うときはprivate修飾子を消す
+	MainPanel mainPanel=new MainPanel(this);
 
-	private MainPanel mainPanel=new MainPanel(this);
-
-	private MenuPanel menuPanel;
-
-
-
-//わからん
+	MenuPanel menuPanel;
 
 	OthelloPanel othelloPanel;
 
 
 
 
-
-	private Client() {//コンストラクタ
+	//driverを使うときはprivate修飾子を消す
+	Client() {//コンストラクタ
 
 		this.add(mainPanel);
 
@@ -230,12 +226,6 @@ public class Client extends JFrame{
 	public void classifyMsg(String msg,BufferedReader br) {//ここで受信データの種類判別
 
 		System.out.println("サーバからメッセージ[" + msg + "]を受信しました"); //テスト用標準出力
-
-
-
-
-
-
 
 		int type;
 
@@ -576,15 +566,6 @@ public class Client extends JFrame{
 			break;
 
 		}
-
-
-
-//わからんはじまり
-
-
-
-
-
 
 
 		case WHERE_PUT:{

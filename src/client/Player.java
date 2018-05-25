@@ -16,8 +16,8 @@ public class Player {
 		lose=playerData[3];
 		giveUp=playerData[4];
 
-		System.out.println("player 情報を取得しました。");
-		System.out.println(playerID+win+draw+lose+giveUp);
+		//System.out.println("player 情報を取得しました。");
+		//System.out.println(playerID+win+draw+lose+giveUp);
 
 	}
 
