@@ -20,7 +20,7 @@ public class Othello {
 
 	static int emp_status;
 
-	static int r1;
+	 static int r1;
 
 	static int r2;
 
@@ -28,22 +28,22 @@ public class Othello {
 
 	static int bw;//自分が黒か白か
 
-	static int x=8;
+	 static int x=8;
 
-	static int i;
+	 static int i;
 
 	static int j;
 
 	static int randJudge=0;
 
-	static int [][] othello=new int[x][x];
+	 static int [][] othello=new int[x][x];
 
-	static int endJudge=0;	//終了判定
-	static int passEnd=0;
-	static  int winJudge=0;
-	static int end=0;//終了決定
+	 static int endJudge=0;	//終了判定
+	 static int passEnd=0;
+	 static  int winJudge=0;
+	 static int end=0;//終了決定
 
-	Othello(int bw,Client cl) {
+	 Othello(int bw,Client cl) {
 
 		 //0…おけない、1…黒、2…白、4…おける
 
@@ -61,9 +61,48 @@ public class Othello {
 
 		 othello[4][4]=2;
 
-		 othello[4][3]=1;
+		 othello[4][3]=1;//2で白用
 
 		 othello[3][4]=1;
+
+//		 othello[2][4]=2;
+
+	//	 //othello[6][4]=2;
+
+//		 int n=1;
+//
+//		 for(i=1; i<x; i++) {
+//
+//			 for(j=0; j<x-1; j++) {
+//
+//				 othello[i][j]=n;//盤面初期化
+//
+//				 if(n==1) {
+//
+//					 n=2;
+//
+//				 }else {
+//
+//					 n=1;
+//
+//				 }
+//
+//			 }
+//
+//		 }
+
+
+
+		 /*for(i=0; i<x; i++) {
+
+
+				 othello[i][4]=1;//盤面初期化
+		 }*/
+
+//othello[0][4]=2;
+
+
+
 
 		 this.bw=bw;//黒か白か
 
@@ -73,7 +112,7 @@ public class Othello {
 
 
 
-	static void print() { //描画
+	 static void print() { //描画
 
 
 
@@ -841,7 +880,9 @@ public class Othello {
 
 		 }
 
-		}
+
+
+		}  //if
 
 	 }
 
@@ -970,10 +1011,34 @@ public class Othello {
 			 winJudge=1;
 			 sendCode(0);
 			 end=1;
-		 }else if(w_num==0 && bw==1){
+		 }else if(b_num==0 && bw==1){
 			 end=1;
 		 }
 
+
+			 //else if(endJudge==2){
+
+//			 if(w_num<b_num && bw==1) {
+
+//				 System.out.println("黒の勝利");
+
+//				 sendCode(0);
+
+//			 }else if(w_num>b_num && bw==2) {
+
+//				 System.out.println("白の勝利");
+
+//				 sendCode(0);
+
+//			 }
+
+//			 else if(w_num==b_num && bw==1){
+
+//			 System.out.println("引き分け");
+
+//			 sendCode(3);//引き分け
+
+//			 }
 
 		 if(emp_num==0){
 			 System.out.println("デバッグ");
@@ -1039,6 +1104,8 @@ public class Othello {
 
 
 		 int c=0;
+
+		 int limit=0;
 
 		 Random r=new Random();
 
@@ -1764,9 +1831,13 @@ public class Othello {
 
 		 int judge=0;
 
+		 int x1,y1;
+
 		 for(i1=0; i1<x; i1++) {
 
 			 for(j1=0; j1<x; j1++) {
+
+			 y1=i1; x1=j1;
 
 				 if(othello[i1][j1]==0 || othello[i1][j1]==4 ) {
 

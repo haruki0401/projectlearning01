@@ -328,7 +328,10 @@ public class Receiver extends Thread{
 									server.resultDraw(myNum, decidedOpponentNum);
 								}
 
-								server.receiver.get(decidedOpponentNum).setWhereIs(5);
+
+								if(server.receiver.get(decidedOpponentNum).getWhereIs()==4) {
+									server.receiver.get(decidedOpponentNum).setWhereIs(5);
+								}
 								whereIs=5;
 
 								server.displayPlayer();//player一覧の更新

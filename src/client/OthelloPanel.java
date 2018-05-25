@@ -317,8 +317,16 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
 
         add(Tlimit);
 
+//    }
+
+//
+
+//    public static void main(String[] args) {
 
     	turn=1;
+
+
+
 
 
         if(oB.bw==1) {
@@ -377,6 +385,7 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
 
     	System.out.println("オセロ呼び出し");
 
+    	//if(oB.bw==turn) {
 
     		if(oB.bw==1) {
 
@@ -390,6 +399,7 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
 
     		}
 
+    //	}
 
 		apply();
 		repaint();
@@ -397,6 +407,13 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
 
     }
 
+
+
+//    public OthelloPanel(int a, Client cl) {
+
+//		// TODO 自動生成されたコンストラクター・スタブ
+
+//	}
 
 
 
@@ -410,6 +427,7 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
 
     		System.out.println("クリックされた");
 
+    		//client.sendMessage("9");//turn,i,j
 
     		theButton = (JButton)e.getComponent();//クリックしたオブジェクトを得る．型が違うのでキャストする
 
@@ -418,6 +436,10 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
     		System.out.println(theArrayIndex);
 
     		char[] ArrayIndChar=theArrayIndex.toCharArray();
+
+
+
+
 
         if(theArrayIndex.length()>1 && oB.bw==1) {//長さが2以上すなわち、盤面のボタンがクリック
 
@@ -458,6 +480,7 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
         			if(oB.end==1) {
         				jend.setEnabled(true);
             			clear();
+        				//oB.end=0;
            				if(oB.winJudge==0) {
         					whichTurn.setText("相手の勝利です");
         				}else if(oB.winJudge==1) {
@@ -466,6 +489,11 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
         					whichTurn.setText("引き分けです");
         				}
         			}
+
+
+
+
+
 
         		    giveUp.setEnabled(false);
 
@@ -529,6 +557,7 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
     			if(oB.end==1) {
     				jend.setEnabled(true);
     				clear();
+    			//	oB.end=0;
        				if(oB.winJudge==0) {
     					whichTurn.setText("相手の勝利です");
     				}else if(oB.winJudge==1) {
@@ -542,6 +571,7 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
 
             	//oB.bw=1;//一人プレイ用
 
+            	//oB.sendInf(turn,theArrayIndexOfI,theArrayIndexOfJ);
 
 
 
@@ -576,12 +606,16 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
             int giveOrPass=Character.getNumericValue(ArrayIndChar[0]); //giveUpならintの0、passならintの1
 
             if(giveOrPass==0) {
-
+            	if(giveUp.isEnabled()==true) {
                 jend.setEnabled(true);//対局終了時にtrueに変更
 				clear();
             	//giveのそうさ
 
             	if(oB.bw==1) {
+
+            			//oB.giveUp(1);
+
+            //		oB.endJudge=2;
 
             			client.sendMessage("699");
 
@@ -590,6 +624,13 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
 	        			whichTurn.setText("投了しました。");
 	        			clear();
 	        			apply();
+
+
+            		//	win=new JLabel("白の勝利");
+
+            		//	add(win);
+
+            		///	win.setBounds(0,0,100,50);//ボタンの大きさと位置を設定する．(x座標，y座標,xの幅,yの幅）
 
             			repaint();
 
@@ -609,6 +650,9 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
 
             	}else {
 
+        			//oB.giveUp(2);
+
+           // 		oB.endJudge=2;
 
         			client.sendMessage("699");
 
@@ -620,6 +664,12 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
 
         			clear();
         			apply();
+
+           		//	win=new JLabel("黒の勝利");
+
+        		////	add(win);
+
+        	//		win.setBounds(0,0,100,50);//ボタンの大きさと位置を設定する．(x座標，y座標,xの幅,yの幅）
 
         			repaint();
 
@@ -635,8 +685,14 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
                     pass.setEnabled(false);
 
             	}
+            }
 
             }else if(giveOrPass==1) {
+            	if(pass.isEnabled()==true) {
+            	//passのそうさ
+            	//if(oB.bw==1) {
+           //         oB.endJudge++;
+               //     oB.judge();
         			client.sendMessage("688");
         			client.receiveHandler(1);
         			whichTurn.setText("相手の手番です");
@@ -659,16 +715,49 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
 	    					whichTurn.setText("引き分けです");
 	    				}
 	    				clear();
+//	        		    giveUp.setEnabled(false);
+//	        	        pass.setEnabled(false);
 	    			}
         	        System.out.println("afterPasssendJudge="+oB.endJudge);
+                    //oB.choiceW();
+        			//client.sendMessage("9othello1"+theArrayIndexOfI+theArrayIndexOfJ);
                     apply();
 
                     repaint();//画面のオブジェクトを描画し直す
+                    //oB.bw=2;
                		System.out.println("n");
         			jtext.setText(TIME_LIMIT);
             		if(th!=null) {
             				th=null;
             		}
+
+            }
+            }else if(giveOrPass==3){
+
+//        		System.out.println("a");
+
+//        		if(th==null) {
+
+//        			th=new Thread(this);
+
+//        			th.start();
+
+//        		}
+
+
+
+            }else{
+
+//        		System.out.println("n");
+
+//    			jtext.setText("30");
+
+//        		if(th!=null) {
+
+//        				th=null;
+
+//        		}
+
 
 
             }
@@ -678,6 +767,8 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
     	}//大きなif
 
     }
+
+
 
 
 
@@ -765,6 +856,25 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
 
     	System.out.println(oB.bw);
 
+
+// 		oB.judge();
+// 		System.out.println("で"+oB.end);
+//		if(oB.end==1) {
+//			jtext.setText(TIME_LIMIT);
+//    		if(th!=null) {
+//    				th=null;
+//    		}
+//			jend.setEnabled(true);
+//			clear();
+//			oB.end=0;
+//				if(oB.winJudge==0) {
+//					whichTurn.setText("相手の勝利です");
+//				}else if(oB.winJudge==1) {
+//					whichTurn.setText("あなたの勝利です");
+//				}else if(oB.winJudge==2) {
+//					whichTurn.setText("引き分けです");
+//				}
+//		}
  		if(rivalI!=9) {
 		System.out.println("a");//タイマースタート
 		if(th==null) {
@@ -815,6 +925,7 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
 	            		if(th!=null) {
 	            				th=null;
 	            		}
+	      //      		oB.endJudge=2;
     		        	oB.giveUp(2);//白のギブアップ);
         				clear();
     		        }else if(rivalI==8 && rivalJ==8) {
@@ -874,6 +985,7 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
       	          		}
       	      			jend.setEnabled(true);
       	      			clear();
+      	      			//oB.end=0;
 	                    giveUp.setEnabled(false);//対局終了時にtrueに変更
 	                    pass.setEnabled(false);//対局終了時にtrueに変更
       	      				if(oB.winJudge==0) {
@@ -896,6 +1008,7 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
     	            		if(th!=null) {
     	            				th=null;
     	            		}
+    	  //          		oB.endJudge=2;
         		        	oB.giveUp(1);//黒のギブアップ);
         		        }else if(rivalI==8 && rivalJ==8) {
         		        	oB.passEnd=1;
@@ -919,7 +1032,23 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
         	       				clear();
         	    			}
         		        }
-       		        System.out.println("emp="+oB.emp_num);
+//    	    	        else if(rivalI==8 && oB.endJudge==2) {
+//                       		System.out.println("n");
+//                			jtext.setText(TIME_LIMIT);
+//                    		if(th!=null) {
+//                    				th=null;
+//                    		}
+//        		        }
+
+//    	    	        if(oB.endJudge==2) {
+//                   		System.out.println("n");
+//            			jtext.setText(TIME_LIMIT);
+//                		if(th!=null) {
+//                				th=null;
+//                		}
+//    		        }
+
+        		        System.out.println("emp="+oB.emp_num);
     	    	        if(oB.emp_num==0) {
                		System.out.println("n");
         			jtext.setText(TIME_LIMIT);
@@ -949,6 +1078,21 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
 
 
 
+    	     //   if(oB.endJudge!=2) {
+
+    	     //   }
+
+    	    //    if((oB.endJudge==2 && rivalI==8) ||(oB.endJudge==2 && rivalI==9) ){
+//        	        if(oB.endJudge==2  ){
+//               		System.out.println("n");
+//                    jend.setEnabled(true);//対局終了時にtrueに変更
+//        			jtext.setText(TIME_LIMIT);
+//            		if(th!=null) {
+//            				th=null;
+//            		}
+//                    jend.setEnabled(true);//対局終了時にtrueに変更
+//
+//    	        }
     	}
     }
 
@@ -1232,7 +1376,7 @@ public class OthelloPanel extends JPanel implements MouseListener,MouseMotionLis
     			clear();//choiceの消去
     			oB.print();
     			apply(); //ボタンのアイコン更新
-    			oB.judge();//勝敗判定
+    			//oB.judge();//勝敗判定
 //    	いる？		if(oB.end==1) {
 //    				jend.setEnabled(true);
 //    				clear();
